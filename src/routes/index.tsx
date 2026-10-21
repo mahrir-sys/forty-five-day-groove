@@ -1,24 +1,41 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Onboarding } from "@/components/challenge/Onboarding";
+import { Dashboard } from "@/components/challenge/Dashboard";
+import { useChallengeStore } from "@/hooks/use-challenge-store";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "45 dagar – din personliga utmaning" },
+      {
+        name: "description",
+        content: "Lägg in dina utmaningar och bocka av dem varje dag i 45 dagar. Följ streak och framsteg.",
+      },
+      { property: "og:title", content: "45 dagar – din personliga utmaning" },
+      {
+        property: "og:description",
+        content: "Lägg in dina utmaningar och bocka av dem varje dag i 45 dagar.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
+  const { state, update, ready, today } = useChallengeStore();
+
+  if (!ready) return <div className="min-h-screen bg-background" />;
+
+  if (!state.startDate) {
+    return (
+      <Onboarding
+        today={today}
+        onStart={(challenges, startDate) => update(() => ({ startDate, challenges, log: {} }))}
       />
-    </div>
-  );
+    );
+  }
+
+  return <Dashboard state={state} today={today} update={update} />;
 }
