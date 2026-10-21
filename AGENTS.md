@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Project rules
+- App language is shared by a root LanguageProvider, stored independently from challenge data after hydration, and translated through src/lib/i18n.ts; changing language must never rename existing challenges or reset progress.
 - Challenge rules (period length, day numbering, stats) live as pure functions in `src/lib/challenge.ts` with tests beside it; UI only calls them, so rules stay testable in one place.
 - App state is stored in the browser's localStorage via `src/hooks/use-challenge-store.ts`, read after hydration to avoid SSR mismatches; the backend never holds the full challenge data.
 - Evening reminder rules live in `src/lib/reminder.ts` (pure, tested) and are used both by the client snapshot and the hourly job, so "when to remind" has one source of truth.
