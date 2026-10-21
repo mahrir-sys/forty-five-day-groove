@@ -1,6 +1,7 @@
+import { LanguageSelect } from "./LanguageSelect";
+import { useLanguage } from "@/hooks/use-language";
 import { useEffect, useState, type ReactNode } from "react";
 import { format } from "date-fns";
-import { sv } from "date-fns/locale";
 import { BarChart3, Check, ChevronLeft, ChevronRight, Flame, Trophy } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
@@ -28,12 +29,13 @@ type Props = {
   update: (fn: (s: AppState) => AppState) => void;
 };
 
-const fmt = (iso: string, pattern: string) => format(parseISODate(iso), pattern, { locale: sv });
 
 export function Dashboard({ state, today, update }: Props) {
+  const { t, dateLocale } = useLanguage();
   const reminders = useReminders(state);
   const install = useInstallApp();
-  const start = state.startDate!;
+  const start = state.startDate ?? today;
+  const fmt = (iso: string, pattern: string) => format(parseISODate(iso), pattern, { locale: dateLocale });
   const end = endDate(start);
   const status = periodStatus(start, today);
   const stats = computeStats(state, today);
@@ -52,19 +54,20 @@ export function Dashboard({ state, today, update }: Props) {
   const daysLeft = dayNumber(today, start) - 1;
 
   const selectedLabel =
-    selected === today ? "Idag" : selected === addDays(today, -1) ? "Igår" : fmt(selected, "EEEE d MMM");
+    selected === today ? t("Idag") : selected === addDays(today, -1) ? t("Igår") : fmt(selected, "EEEE d MMM");
 
   return (
     <div className="bg-glow min-h-screen">
       <main className="mx-auto max-w-md px-5 pb-16 pt-6">
+        <div className="mb-4 flex justify-end"><LanguageSelect /></div>
         <header className="flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
-            {TOTAL_DAYS} dagar
+            {TOTAL_DAYS} {t("days")}
           </p>
           <div className="flex items-center gap-1">
           <Link
             to="/statistik"
-            aria-label="Statistik"
+            aria-label={t("Statistik")}
             className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
           >
             <BarChart3 className="size-5" />
@@ -97,11 +100,11 @@ export function Dashboard({ state, today, update }: Props) {
         <section className="mt-4">
           {status === "upcoming" ? (
             <>
-              <p className="text-sm font-medium text-muted-foreground">Startar {fmt(start, "d MMMM")}</p>
+              <p className="text-sm font-medium text-muted-foreground">{t("starts", { date: fmt(start, "d MMMM") })}</p>
               <h1 className="mt-1 text-7xl font-extrabold leading-none tracking-tight">
                 <span className="text-flame">{daysLeft}</span>
                 <span className="ml-2 text-3xl text-muted-foreground">
-                  {daysLeft === 1 ? "dag kvar" : "dagar kvar"}
+                  {daysLeft === 1 ? t("dag kvar") : t("dagar kvar")}
                 </span>
               </h1>
             </>
@@ -109,10 +112,10 @@ export function Dashboard({ state, today, update }: Props) {
             <div className="flex items-end gap-4">
               <Trophy className="mb-2 size-14 text-primary" strokeWidth={1.5} />
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Perioden är avslutad</p>
+                <p className="text-sm font-medium text-muted-foreground">{t("Perioden är avslutad")}</p>
                 <h1 className="text-5xl font-extrabold leading-none tracking-tight">
                   <span className="text-flame">{stats.completedDays}</span>
-                  <span className="text-2xl text-muted-foreground"> / {TOTAL_DAYS} hela dagar</span>
+                  <span className="text-2xl text-muted-foreground"> / {TOTAL_DAYS} {t("hela dagar")}</span>
                 </h1>
               </div>
             </div>
@@ -122,7 +125,7 @@ export function Dashboard({ state, today, update }: Props) {
                 {fmt(start, "d MMM")} – {fmt(end, "d MMM")}
               </p>
               <h1 className="mt-1 flex items-baseline font-extrabold leading-none tracking-tight">
-                <span className="mr-3 text-2xl text-muted-foreground">Dag</span>
+                <span className="mr-3 text-2xl text-muted-foreground">{t("Dag")}</span>
                 <span className="text-flame text-[7rem] leading-[0.85]">{stats.currentDay}</span>
                 <span className="ml-2 text-3xl text-muted-foreground">/{TOTAL_DAYS}</span>
               </h1>
@@ -138,9 +141,9 @@ export function Dashboard({ state, today, update }: Props) {
 
         {/* Stats */}
         <section className="mt-6 grid grid-cols-3 gap-2">
-          <Stat label="Streak" value={stats.streak} icon={<Flame className="size-4 text-primary" />} />
-          <Stat label="Hela dagar" value={stats.completedDays} />
-          <Stat label="Missade" value={stats.missedDays} muted={stats.missedDays === 0} />
+          <Stat label={t("Streak")} value={stats.streak} icon={<Flame className="size-4 text-primary" />} />
+          <Stat label={t("Hela dagar")} value={stats.completedDays} />
+          <Stat label={t("Missade")} value={stats.missedDays} muted={stats.missedDays === 0} />
         </section>
 
         {/* Checklist */}
@@ -151,14 +154,14 @@ export function Dashboard({ state, today, update }: Props) {
               onClick={() => setSelected(addDays(selected, -1))}
               disabled={selectedN <= 1}
               className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-30"
-              aria-label="Föregående dag"
+              aria-label={t("Föregående dag")}
             >
               <ChevronLeft className="size-5" />
             </button>
             <div className="text-center">
               <h2 className="text-xl font-bold capitalize">{selectedLabel}</h2>
               <p className="text-xs uppercase tracking-widest text-muted-foreground">
-                Dag {Math.max(1, selectedN)} · {done}/{total} klara
+                {t("Dag")} {Math.max(1, selectedN)} · {done}/{total} {t("klara")}
               </p>
             </div>
             <button
@@ -166,7 +169,7 @@ export function Dashboard({ state, today, update }: Props) {
               onClick={() => setSelected(addDays(selected, 1))}
               disabled={selected >= lastSelectable || status === "upcoming"}
               className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-30"
-              aria-label="Nästa dag"
+              aria-label={t("Nästa dag")}
             >
               <ChevronRight className="size-5" />
             </button>
@@ -174,7 +177,7 @@ export function Dashboard({ state, today, update }: Props) {
 
           {total === 0 ? (
             <p className="mt-4 rounded-2xl border border-dashed p-6 text-center text-muted-foreground">
-              Inga utmaningar än. Lägg till via inställningarna uppe till höger.
+              {t("Inga utmaningar än. Lägg till via inställningarna uppe till höger.")}
             </p>
           ) : (
             <ul className="mt-4 space-y-2">
@@ -212,7 +215,7 @@ export function Dashboard({ state, today, update }: Props) {
 
           {allDone && canCheck && (
             <p className="animate-pop mt-4 rounded-2xl bg-flame p-4 text-center font-display text-lg font-bold text-primary-foreground shadow-glow">
-              {selected === today ? "Dagen är klar. Starkt jobbat!" : "Hela dagen avklarad!"}
+              {selected === today ? t("Dagen är klar. Starkt jobbat!") : t("Hela dagen avklarad!")}
             </p>
           )}
         </section>
@@ -220,17 +223,17 @@ export function Dashboard({ state, today, update }: Props) {
         {/* Overview */}
         <section className="mt-10">
           <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">Översikt</h2>
-            <span className="text-sm font-semibold text-foreground">{stats.percent}% avklarat</span>
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">{t("Översikt")}</h2>
+            <span className="text-sm font-semibold text-foreground">{stats.percent}% {t("avklarat")}</span>
           </div>
           <div className="rounded-2xl border bg-card p-3">
             <DayGrid state={state} today={today} selected={selected} onSelect={setSelected} />
           </div>
           <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            <Legend className="bg-flame" label="Klar" />
-            <Legend className="bg-primary/30" label="Delvis" />
-            <Legend className="bg-destructive/15" label="Missad" />
-            <Legend className="border border-dashed" label="Kommande" />
+            <Legend className="bg-flame" label={t("Klar")} />
+            <Legend className="bg-primary/30" label={t("Delvis")} />
+            <Legend className="bg-destructive/15" label={t("Missad")} />
+            <Legend className="border border-dashed" label={t("Kommande")} />
           </div>
         </section>
       </main>

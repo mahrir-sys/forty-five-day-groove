@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/use-language";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { AppState } from "@/lib/challenge";
@@ -13,6 +14,7 @@ import {
 
 /** Evening reminder state for this phone, kept in sync with the challenge progress. */
 export function useReminders(state: AppState) {
+  const { t } = useLanguage();
   const [status, setStatus] = useState<ReminderStatus>("loading");
   const [busy, setBusy] = useState(false);
   const snapshot = useMemo(() => reminderSnapshot(state), [state]);
@@ -47,7 +49,7 @@ export function useReminders(state: AppState) {
       await fn();
     } catch (e) {
       console.error(e);
-      toast.error("Något gick fel. Kontrollera att du har internet och försök igen.");
+      toast.error(t("Något gick fel. Kontrollera att du har internet och försök igen."));
     } finally {
       setBusy(false);
     }
@@ -57,25 +59,25 @@ export function useReminders(state: AppState) {
     run(async () => {
       const next = await enableReminders(snapshot);
       setStatus(next);
-      if (next === "on") toast.success("Kvällspåminnelsen är på");
-      else if (next === "blocked") toast.error("Notiser är blockerade. Följ guiden för att tillåta dem.");
+      if (next === "on") toast.success(t("Kvällspåminnelsen är på"));
+      else if (next === "blocked") toast.error(t("Notiser är blockerade. Följ guiden för att tillåta dem."));
     });
 
   const disable = () =>
     run(async () => {
       await disableReminders();
       setStatus("off");
-      toast("Kvällspåminnelsen är avstängd");
+      toast(t("Kvällspåminnelsen är avstängd"));
     });
 
   const test = () =>
     run(async () => {
       const result = await sendTest();
-      if (result === "ok") toast.success("Testnotis skickad. Den bör synas inom några sekunder.");
+      if (result === "ok") toast.success(t("Testnotis skickad. Den bör synas inom några sekunder."));
       else if (result === "not-registered") {
         setStatus("off");
-        toast.error("Telefonen är inte längre kopplad. Slå på påminnelsen igen.");
-      } else toast.error("Testnotisen kunde inte skickas. Försök igen om en stund.");
+        toast.error(t("Telefonen är inte längre kopplad. Slå på påminnelsen igen."));
+      } else toast.error(t("Testnotisen kunde inte skickas. Försök igen om en stund."));
     });
 
   return { status, busy, enable, disable, test, refresh };

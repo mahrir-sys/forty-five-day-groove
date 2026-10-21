@@ -1,3 +1,5 @@
+import { LanguageSelect } from "./LanguageSelect";
+import { useLanguage } from "@/hooks/use-language";
 import { useState } from "react";
 import { Plus, RotateCcw, Settings2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,21 +36,23 @@ type Props = {
 };
 
 export function ManageSheet({ challenges, onAdd, onRename, onRemove, onRestart, onReset }: Props) {
+  const { t } = useLanguage();
   const [text, setText] = useState("");
 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full" aria-label="Hantera utmaningar">
+        <Button variant="ghost" size="icon" className="rounded-full" aria-label={t("Hantera utmaningar")}>
           <Settings2 className="size-5" />
         </Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-3xl border-t bg-card">
         <SheetHeader className="text-left">
-          <SheetTitle className="font-display text-2xl">Dina utmaningar</SheetTitle>
-          <SheetDescription>Lägg till eller ta bort. Ändringar gäller alla dagar.</SheetDescription>
+          <SheetTitle className="font-display text-2xl">{t("Dina utmaningar")}</SheetTitle>
+          <SheetDescription>{t("Lägg till eller ta bort. Ändringar gäller alla dagar.")}</SheetDescription>
         </SheetHeader>
 
+        <div className="mt-5 flex items-center justify-between gap-3"><span className="text-sm text-muted-foreground">{t("language")}</span><LanguageSelect /></div>
         <form
           className="mt-5 flex gap-2"
           onSubmit={(e) => {
@@ -61,11 +65,11 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onRestart, 
           <Input
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Ny utmaning"
+            placeholder={t("Ny utmaning")}
             className="h-12 rounded-xl bg-background text-base"
-            aria-label="Ny utmaning"
+            aria-label={t("Ny utmaning")}
           />
-          <Button type="submit" size="icon" className="h-12 w-12 shrink-0 rounded-xl" aria-label="Lägg till">
+          <Button type="submit" size="icon" className="h-12 w-12 shrink-0 rounded-xl" aria-label={t("Lägg till")}>
             <Plus />
           </Button>
         </form>
@@ -82,19 +86,19 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onRestart, 
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="outline" className="h-12 w-full justify-start rounded-xl bg-background">
-                <RotateCcw /> Starta ny {TOTAL_DAYS}-dagarsperiod
+                <RotateCcw /> {t("restartPeriod", { days: TOTAL_DAYS })}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Starta om från dag 1?</AlertDialogTitle>
+                <AlertDialogTitle>{t("Starta om från dag 1?")}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Dina utmaningar behålls, men alla avbockningar raderas och perioden startar idag.
+                  {t("Dina utmaningar behålls, men alla avbockningar raderas och perioden startar idag.")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Avbryt</AlertDialogCancel>
-                <AlertDialogAction onClick={onRestart}>Starta om</AlertDialogAction>
+                <AlertDialogCancel>{t("Avbryt")}</AlertDialogCancel>
+                <AlertDialogAction onClick={onRestart}>{t("Starta om")}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -105,23 +109,23 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onRestart, 
                 variant="ghost"
                 className="h-12 w-full justify-start rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive"
               >
-                <Trash2 /> Radera allt
+                <Trash2 /> {t("Radera allt")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Radera allt?</AlertDialogTitle>
+                <AlertDialogTitle>{t("Radera allt?")}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Alla utmaningar och all historik tas bort. Det går inte att ångra.
+                  {t("Alla utmaningar och all historik tas bort. Det går inte att ångra.")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Avbryt</AlertDialogCancel>
+                <AlertDialogCancel>{t("Avbryt")}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={onReset}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                  Radera
+                  {t("Radera")}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

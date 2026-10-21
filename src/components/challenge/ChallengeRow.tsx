@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/use-language";
 import { useState } from "react";
 import { Check, Pencil, Trash2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
+  const { t } = useLanguage();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(c.name);
 
@@ -28,9 +30,9 @@ export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           className="h-10 flex-1 rounded-lg text-base"
-          aria-label="Nytt namn"
+          aria-label={t("Nytt namn")}
         />
-        <button type="submit" className="rounded-full p-1.5 text-primary hover:bg-primary/15" aria-label="Spara namn">
+        <button type="submit" className="rounded-full p-1.5 text-primary hover:bg-primary/15" aria-label={t("Spara namn")}>
           <Check className="size-4" />
         </button>
         <button
@@ -40,7 +42,7 @@ export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
             setEditing(false);
           }}
           className="rounded-full p-1.5 text-muted-foreground hover:bg-secondary"
-          aria-label="Avbryt"
+          aria-label={t("Avbryt")}
         >
           <X className="size-4" />
         </button>
@@ -58,7 +60,7 @@ export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
           setEditing(true);
         }}
         className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-        aria-label={`Byt namn på ${c.name}`}
+        aria-label={t("rename", { name: c.name })}
       >
         <Pencil className="size-4" />
       </button>
@@ -66,7 +68,7 @@ export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
         type="button"
         onClick={onRemove}
         className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-destructive"
-        aria-label={`Ta bort ${c.name}`}
+        aria-label={t("remove", { name: c.name })}
       >
         <Trash2 className="size-4" />
       </button>
