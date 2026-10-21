@@ -6,15 +6,15 @@ import { useChallengeStore } from "@/hooks/use-challenge-store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "45 dagar – din personliga utmaning" },
+      { title: "45 days – your personal challenge" },
       {
         name: "description",
-        content: "Lägg in dina utmaningar och bocka av dem varje dag i 45 dagar. Följ streak och framsteg.",
+        content: "Track your daily challenges for 45 days. Follow your streaks and progress in English, Swedish or French.",
       },
-      { property: "og:title", content: "45 dagar – din personliga utmaning" },
+      { property: "og:title", content: "45 days – your personal challenge" },
       {
         property: "og:description",
-        content: "Lägg in dina utmaningar och bocka av dem varje dag i 45 dagar.",
+        content: "Track your daily challenges for 45 days in English, Swedish or French.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

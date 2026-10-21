@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/use-language";
 import type { ReactNode } from "react";
 import { Bell, BellOff, BellRing, CheckCircle2, Download, ExternalLink, Loader2, ShieldAlert, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,10 +7,11 @@ import { cn } from "@/lib/utils";
 import type { RemindersApi } from "@/hooks/use-reminders";
 import type { InstallApi } from "@/hooks/use-install-app";
 import type { ReminderStatus } from "@/lib/push-reminders";
+import type { MessageKey } from "@/lib/i18n";
 
 type Props = { reminders: RemindersApi; install: InstallApi };
 
-const STATUS: Record<ReminderStatus, { icon: ReactNode; title: string; text: string; tone: "on" | "warn" | "off" }> = {
+const STATUS: Record<ReminderStatus, { icon: ReactNode; title: MessageKey; text: MessageKey | ""; tone: "on" | "warn" | "off" }> = {
   loading: { icon: <Loader2 className="size-6 animate-spin" />, title: "Kollar notiser…", text: "", tone: "off" },
   on: {
     icon: <BellRing className="size-6" />,
@@ -44,22 +46,23 @@ const STATUS: Record<ReminderStatus, { icon: ReactNode; title: string; text: str
 };
 
 export function ReminderSheet({ reminders, install }: Props) {
+  const { t } = useLanguage();
   const { status, busy } = reminders;
   const info = STATUS[status];
 
   return (
     <Sheet onOpenChange={(open) => open && void reminders.refresh()}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative rounded-full" aria-label="Påminnelser">
+        <Button variant="ghost" size="icon" className="relative rounded-full" aria-label={t("Påminnelser")}>
           <Bell className="size-5" />
           {status === "on" && <span className="absolute right-2 top-2 size-2 rounded-full bg-primary" aria-hidden />}
         </Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto rounded-t-3xl border-t bg-card">
         <SheetHeader className="text-left">
-          <SheetTitle className="font-display text-2xl">Kvällspåminnelse</SheetTitle>
+          <SheetTitle className="font-display text-2xl">{t("Kvällspåminnelse")}</SheetTitle>
           <SheetDescription>
-            Har du inte bockat av något när kvällen kommer får du en notis, även när appen är stängd.
+            {t("Har du inte bockat av något när kvällen kommer får du en notis, även när appen är stängd.")}
           </SheetDescription>
         </SheetHeader>
 
@@ -76,30 +79,30 @@ export function ReminderSheet({ reminders, install }: Props) {
             {info.icon}
           </span>
           <div>
-            <p className="font-semibold">{info.title}</p>
-            {info.text && <p className="mt-1 text-sm text-muted-foreground">{info.text}</p>}
+            <p className="font-semibold">{t(info.title)}</p>
+            {info.text && <p className="mt-1 text-sm text-muted-foreground">{t(info.text)}</p>}
           </div>
         </div>
 
         <div className="mt-3 space-y-2">
           {status === "off" && (
             <Button className="h-12 w-full rounded-xl text-base" onClick={reminders.enable} disabled={busy}>
-              {busy ? <Loader2 className="animate-spin" /> : <BellRing />} Slå på kvällspåminnelse
+              {busy ? <Loader2 className="animate-spin" /> : <BellRing />} {t("Slå på kvällspåminnelse")}
             </Button>
           )}
           {status === "on" && (
             <>
               <Button className="h-12 w-full rounded-xl text-base" onClick={reminders.test} disabled={busy}>
-                {busy ? <Loader2 className="animate-spin" /> : <Bell />} Skicka testnotis
+                {busy ? <Loader2 className="animate-spin" /> : <Bell />} {t("Skicka testnotis")}
               </Button>
               <Button variant="ghost" className="h-11 w-full rounded-xl text-muted-foreground" onClick={reminders.disable} disabled={busy}>
-                <BellOff /> Stäng av påminnelser
+                <BellOff /> {t("Stäng av påminnelser")}
               </Button>
             </>
           )}
           {status === "blocked" && (
             <Button variant="outline" className="h-12 w-full rounded-xl bg-background" onClick={() => void reminders.refresh()}>
-              Kolla igen
+              {t("Kolla igen")}
             </Button>
           )}
         </div>
@@ -108,52 +111,48 @@ export function ReminderSheet({ reminders, install }: Props) {
           {install.installed ? (
             <>
               <CheckCircle2 className="size-6 shrink-0 text-primary" />
-              <p className="text-sm font-semibold">Appen är installerad på telefonen</p>
+              <p className="text-sm font-semibold">{t("Appen är installerad på telefonen")}</p>
             </>
           ) : install.canInstall ? (
             <>
               <Download className="size-6 shrink-0 text-primary" />
-              <p className="flex-1 text-sm font-semibold">Lägg appen på hemskärmen</p>
+              <p className="flex-1 text-sm font-semibold">{t("Lägg appen på hemskärmen")}</p>
               <Button size="sm" className="rounded-lg" onClick={() => void install.install()}>
-                Installera
+                {t("Installera")}
               </Button>
             </>
           ) : (
             <>
               <Smartphone className="size-6 shrink-0 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Appen är inte installerad än. Se steg 1 nedan.</p>
+              <p className="text-sm text-muted-foreground">{t("Appen är inte installerad än. Se steg 1 nedan.")}</p>
             </>
           )}
         </div>
 
         <section className="mt-8 pb-6">
           <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-            Så slår du på notiser på Android
+            {t("Så slår du på notiser på Android")}
           </h3>
           <ol className="mt-4 space-y-4">
-            <Step n={1} title="Installera appen">
-              Öppna appens länk i Chrome. Tryck på <b>⋮</b> uppe till höger och välj <b>Installera app</b> eller{" "}
-              <b>Lägg till på startskärmen</b>.
+            <Step n={1} title={t("Installera appen")}>
+              {t("guideInstall")}
             </Step>
-            <Step n={2} title="Öppna från hemskärmen">
-              Starta <b>45 dagar</b> från ikonen på hemskärmen, inte från Chrome.
+            <Step n={2} title={t("Öppna från hemskärmen")}>
+              {t("guideOpen")}
             </Step>
-            <Step n={3} title="Tillåt notiser">
-              Tryck på klockan uppe till höger, sedan <b>Slå på kvällspåminnelse</b>. Välj <b>Tillåt</b> när telefonen frågar.
+            <Step n={3} title={t("Tillåt notiser")}>
+              {t("guideAllow")}
             </Step>
-            <Step n={4} title="Om notiser är blockerade">
-              Håll fingret på appikonen och välj <b>Appinfo</b> → <b>Aviseringar</b> → slå på. Använder du appen i Chrome:
-              tryck på <b>⋮</b> → <b>Inställningar</b> → <b>Webbplatsinställningar</b> → <b>Aviseringar</b> och tillåt appen.
+            <Step n={4} title={t("Om notiser är blockerade")}>
+              {t("guideBlocked")}
             </Step>
-            <Step n={5} title="Testa">
-              Tryck på <b>Skicka testnotis</b>. Kommer notisen fram är du klar.
+            <Step n={5} title={t("Testa")}>
+              {t("guideTest")}
             </Step>
           </ol>
           <p className="mt-5 rounded-xl bg-secondary p-3 text-sm text-muted-foreground">
-            <b className="text-foreground">Kommer notisen sent eller inte alls?</b> Gå till Android-inställningar →{" "}
-            <b>Appar</b> → <b>Chrome</b> → <b>Batteri</b> och välj <b>Obegränsad</b>. Då stoppar inte batterisparläget
-            notiserna.
-          </p>
+             {t("guideBattery")}
+           </p>
         </section>
       </SheetContent>
     </Sheet>

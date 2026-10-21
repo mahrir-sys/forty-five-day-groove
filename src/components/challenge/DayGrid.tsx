@@ -1,3 +1,4 @@
+import { useLanguage } from "@/hooks/use-language";
 import { cn } from "@/lib/utils";
 import { addDays, dayNumber, dayProgress, TOTAL_DAYS, type AppState } from "@/lib/challenge";
 
@@ -9,7 +10,9 @@ type Props = {
 };
 
 export function DayGrid({ state, today, selected, onSelect }: Props) {
-  const start = state.startDate!;
+  const { t } = useLanguage();
+  const start = state.startDate;
+  if (!start) return null;
   const todayN = dayNumber(start, today);
 
   return (
@@ -30,7 +33,7 @@ export function DayGrid({ state, today, selected, onSelect }: Props) {
             type="button"
             disabled={future}
             onClick={() => onSelect(date)}
-            aria-label={`Dag ${n}, ${done} av ${total} klara`}
+            aria-label={t("gridLabel", { n, done, total })}
             aria-pressed={selected === date}
             className={cn(
               "relative flex aspect-square items-center justify-center rounded-lg text-[11px] font-bold tabular-nums transition-all",

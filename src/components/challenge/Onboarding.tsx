@@ -1,17 +1,12 @@
+import { getSuggestions } from "@/lib/i18n";
+import { LanguageSelect } from "./LanguageSelect";
+import { useLanguage } from "@/hooks/use-language";
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TOTAL_DAYS, type Challenge } from "@/lib/challenge";
 
-const SUGGESTIONS = [
-  "Träna 45 min",
-  "Drick 3 liter vatten",
-  "Läs 10 sidor",
-  "Inget socker",
-  "Promenad utomhus",
-  "Meditera 10 min",
-];
 
 type Props = {
   today: string;
@@ -19,6 +14,7 @@ type Props = {
 };
 
 export function Onboarding({ today, onStart }: Props) {
+  const { t, language } = useLanguage();
   const [items, setItems] = useState<Challenge[]>([]);
   const [text, setText] = useState("");
   const [startDate, setStartDate] = useState(today);
@@ -31,29 +27,29 @@ export function Onboarding({ today, onStart }: Props) {
     setText("");
   };
 
-  const unused = SUGGESTIONS.filter(
+  const unused = getSuggestions(language).filter(
     (s) => !items.some((i) => i.name.toLowerCase() === s.toLowerCase()),
   );
 
   return (
     <div className="bg-glow min-h-screen">
       <main className="mx-auto flex max-w-md flex-col px-5 pb-10 pt-12">
+        <div className="mb-6 flex justify-end"><LanguageSelect /></div>
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
-          Utmaningen
+          {t("Utmaningen")}
         </p>
-        <h1 className="mt-3 text-6xl font-extrabold leading-[0.9] tracking-tight">
-          <span className="text-flame">{TOTAL_DAYS}</span> dagar.
+        <h1 className="mt-3 text-5xl font-extrabold leading-[0.95]">
+          <span className="text-flame">{TOTAL_DAYS}</span> {t("dagar.")}
           <br />
-          Inga ursäkter.
+          {t("Inga ursäkter.")}
         </h1>
         <p className="mt-4 text-muted-foreground">
-          Lägg till de utmaningar du ska klara varje dag. Bocka av dem i {TOTAL_DAYS} dagar i
-          rad.
+          {t("intro", { days: TOTAL_DAYS })}
         </p>
 
         <section className="mt-8">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-            Dina utmaningar
+            {t("Dina utmaningar")}
           </h2>
           <form
             className="mt-3 flex gap-2"
@@ -65,11 +61,11 @@ export function Onboarding({ today, onStart }: Props) {
             <Input
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="T.ex. Kallbad varje morgon"
+              placeholder={t("T.ex. Kallbad varje morgon")}
               className="h-12 rounded-xl bg-card text-base"
-              aria-label="Ny utmaning"
+              aria-label={t("Ny utmaning")}
             />
-            <Button type="submit" size="icon" className="h-12 w-12 shrink-0 rounded-xl" aria-label="Lägg till">
+            <Button type="submit" size="icon" className="h-12 w-12 shrink-0 rounded-xl" aria-label={t("Lägg till")}>
               <Plus />
             </Button>
           </form>
@@ -89,7 +85,7 @@ export function Onboarding({ today, onStart }: Props) {
                     type="button"
                     onClick={() => setItems((prev) => prev.filter((p) => p.id !== item.id))}
                     className="rounded-full p-1 text-muted-foreground transition-colors hover:text-foreground"
-                    aria-label={`Ta bort ${item.name}`}
+                    aria-label={t("remove", { name: item.name })}
                   >
                     <X className="size-4" />
                   </button>
@@ -119,7 +115,7 @@ export function Onboarding({ today, onStart }: Props) {
             htmlFor="start-date"
             className="text-sm font-semibold uppercase tracking-widest text-muted-foreground"
           >
-            Startdatum
+            {t("Startdatum")}
           </label>
           <Input
             id="start-date"
@@ -137,11 +133,11 @@ export function Onboarding({ today, onStart }: Props) {
           disabled={items.length === 0}
           onClick={() => onStart(items, startDate)}
         >
-          Starta {TOTAL_DAYS} dagar
+          {t("start", { days: TOTAL_DAYS })}
         </Button>
         {items.length === 0 && (
           <p className="mt-3 text-center text-sm text-muted-foreground">
-            Lägg till minst en utmaning för att börja.
+            {t("Lägg till minst en utmaning för att börja.")}
           </p>
         )}
       </main>
