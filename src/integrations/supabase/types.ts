@@ -14,7 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      push_devices: {
+        Row: {
+          auth: string
+          challenge_count: number
+          checked_dates: string[]
+          created_at: string
+          endpoint: string
+          id: string
+          last_reminded_on: string | null
+          p256dh: string
+          secret_hash: string
+          start_date: string | null
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          auth: string
+          challenge_count?: number
+          checked_dates?: string[]
+          created_at?: string
+          endpoint: string
+          id: string
+          last_reminded_on?: string | null
+          p256dh: string
+          secret_hash: string
+          start_date?: string | null
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          auth?: string
+          challenge_count?: number
+          checked_dates?: string[]
+          created_at?: string
+          endpoint?: string
+          id?: string
+          last_reminded_on?: string | null
+          p256dh?: string
+          secret_hash?: string
+          start_date?: string | null
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      push_keys: {
+        Row: {
+          created_at: string
+          id: number
+          private_jwk: Json
+          public_key: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          private_jwk: Json
+          public_key: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          private_jwk?: Json
+          public_key?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
