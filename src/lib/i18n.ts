@@ -6,6 +6,9 @@ export function resolveLanguage(value: unknown): Language {
   return LANGUAGES.find((language) => language === value) ?? DEFAULT_LANGUAGE;
 }
 const messages = {
+  "translatingNames": { "en": "Translating…", "sv": "Översätter…", "fr": "Traduction…" },
+  "translationFailed": { "en": "Could not translate challenge names. Please try again.", "sv": "Kunde inte översätta utmaningsnamnen. Försök igen.", "fr": "Impossible de traduire les noms des défis. Réessayez." },
+  "retryTranslation": { "en": "Retry translation", "sv": "Försök översätta igen", "fr": "Réessayer la traduction" },
   "Utmaningen": {
     "en": "The challenge",
     "sv": "Utmaningen",

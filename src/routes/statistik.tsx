@@ -20,7 +20,7 @@ export const Route = createFileRoute("/statistik")({
 });
 
 function StatsPage() {
-  const { t } = useLanguage();
+  const { t, challengeName } = useLanguage();
   const { state, ready, today } = useChallengeStore();
   if (!ready) return <div className="min-h-screen bg-background" />;
 
@@ -66,7 +66,7 @@ function StatsPage() {
               {items.map((c) => (
                 <article key={c.id} className="rounded-2xl border bg-card p-4">
                   <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="min-w-0 break-words text-lg font-bold">{c.name}</h3>
+                    <h3 className="min-w-0 break-words text-lg font-bold">{challengeName(c.name)}</h3>
                     <span className="shrink-0 font-display text-2xl font-extrabold tabular-nums text-primary">
                       {c.percent}%
                     </span>
