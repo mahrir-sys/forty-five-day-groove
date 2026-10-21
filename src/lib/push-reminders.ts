@@ -91,7 +91,10 @@ async function register(snapshot: ReminderSnapshot): Promise<void> {
       ...device,
       ...snapshot,
       timezone: timezone(),
-      subscription: { endpoint: json.endpoint ?? sub.endpoint, keys: { p256dh: json.keys?.p256dh ?? "", auth: json.keys?.auth ?? "" } },
+      subscription: {
+        endpoint: json.endpoint ?? sub.endpoint,
+        keys: { p256dh: json.keys?.["p256dh"] ?? "", auth: json.keys?.["auth"] ?? "" },
+      },
     },
   });
   window.localStorage.setItem(DEVICE_KEY, JSON.stringify(device));
