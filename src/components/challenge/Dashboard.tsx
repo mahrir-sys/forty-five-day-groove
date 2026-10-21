@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { format } from "date-fns";
 import { sv } from "date-fns/locale";
 import { Check, ChevronLeft, ChevronRight, Flame, Trophy } from "lucide-react";
@@ -224,7 +224,7 @@ function Stat({
 }: {
   label: string;
   value: number;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   muted?: boolean;
 }) {
   return (
