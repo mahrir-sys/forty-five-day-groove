@@ -63,6 +63,12 @@ export function Dashboard({ state, today, update }: Props) {
                 challenges: [...s.challenges, { id: crypto.randomUUID(), name }],
               }))
             }
+            onRename={(id, name) =>
+              update((s) => ({
+                ...s,
+                challenges: s.challenges.map((c) => (c.id === id ? { ...c, name } : c)),
+              }))
+            }
             onRemove={(id) =>
               update((s) => ({ ...s, challenges: s.challenges.filter((c) => c.id !== id) }))
             }

@@ -23,12 +23,12 @@ export function toISODate(d: Date): string {
 }
 
 export function parseISODate(iso: string): Date {
-  const [y, m, d] = iso.split("-").map(Number);
+  const [y = 0, m = 1, d = 1] = iso.split("-").map(Number);
   return new Date(y, m - 1, d);
 }
 
 function utc(iso: string): number {
-  const [y, m, d] = iso.split("-").map(Number);
+  const [y = 0, m = 1, d = 1] = iso.split("-").map(Number);
   return Date.UTC(y, m - 1, d);
 }
 
