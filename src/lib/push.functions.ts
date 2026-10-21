@@ -38,7 +38,7 @@ export const getReminderKey = createServerFn({ method: "GET" }).handler(async ()
 
 /** Register (or re-register) this phone for evening reminders. */
 export const saveReminderDevice = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => deviceAuth.merge(snapshot).extend({ subscription }).parse(input))
+  .validator((input: unknown) => deviceAuth.merge(snapshot).extend({ subscription }).parse(input))
   .handler(async ({ data }) => {
     const { getAdmin, hashSecret } = await import("./push.server");
     const db = await getAdmin();
@@ -68,7 +68,7 @@ export const saveReminderDevice = createServerFn({ method: "POST" })
 
 /** Keep the server's view of today's progress up to date. */
 export const syncReminderDevice = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => deviceAuth.merge(snapshot).parse(input))
+  .validator((input: unknown) => deviceAuth.merge(snapshot).parse(input))
   .handler(async ({ data }) => {
     const { getAdmin, hashSecret } = await import("./push.server");
     const db = await getAdmin();
@@ -89,7 +89,7 @@ export const syncReminderDevice = createServerFn({ method: "POST" })
   });
 
 export const removeReminderDevice = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => deviceAuth.parse(input))
+  .validator((input: unknown) => deviceAuth.parse(input))
   .handler(async ({ data }) => {
     const { getAdmin, hashSecret } = await import("./push.server");
     const db = await getAdmin();
@@ -99,7 +99,7 @@ export const removeReminderDevice = createServerFn({ method: "POST" })
 
 /** Send a test notification right away to this phone. */
 export const sendTestReminder = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => deviceAuth.parse(input))
+  .validator((input: unknown) => deviceAuth.parse(input))
   .handler(async ({ data }) => {
     const { getAdmin, hashSecret, getPushKeys, sendPush } = await import("./push.server");
     const db = await getAdmin();
