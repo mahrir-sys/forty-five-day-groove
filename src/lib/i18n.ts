@@ -514,12 +514,12 @@ const messages = {
   "checkedDays": {
     "en": "{checked} of {days} days checked off",
     "sv": "{checked} av {days} dagar avbockade",
-    "fr": "{checked} jours validés sur {days}"
+    "fr": "Jours validés : {checked}/{days}"
   },
   "elapsedDays": {
-    "en": "{days} days elapsed",
+    "en": "Days elapsed: {days}",
     "sv": "{days} dagar har gått",
-    "fr": "{days} jours écoulés"
+    "fr": "Jours écoulés : {days}"
   },
   "guideInstall": {
     "en": "Open the app’s link in Chrome. Tap ⋮ in the top right and choose Install app or Add to Home screen.",

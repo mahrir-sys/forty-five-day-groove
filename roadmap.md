@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] English default, Swedish and French language selection with localized challenge suggestions
+- [x] English default, Swedish and French language selection with localized challenge suggestions
 
 - [x] Installable Android app: app info file and icons
 - [x] Evening reminder at 20–21 when no challenge is checked, even when the app is closed (Lovable Cloud + web push)
