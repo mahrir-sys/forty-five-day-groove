@@ -17,6 +17,9 @@ import {
 } from "@/lib/challenge";
 import { DayGrid } from "./DayGrid";
 import { ManageSheet } from "./ManageSheet";
+import { ReminderSheet } from "./ReminderSheet";
+import { useReminders } from "@/hooks/use-reminders";
+import { useInstallApp } from "@/hooks/use-install-app";
 
 type Props = {
   state: AppState;
@@ -27,6 +30,8 @@ type Props = {
 const fmt = (iso: string, pattern: string) => format(parseISODate(iso), pattern, { locale: sv });
 
 export function Dashboard({ state, today, update }: Props) {
+  const reminders = useReminders(state);
+  const install = useInstallApp();
   const start = state.startDate!;
   const end = endDate(start);
   const status = periodStatus(start, today);
@@ -77,6 +82,7 @@ export function Dashboard({ state, today, update }: Props) {
             onRestart={() => update((s) => ({ ...s, startDate: today, log: {} }))}
             onReset={() => update(() => ({ startDate: null, challenges: [], log: {} }))}
           />
+          </div>
         </header>
 
         {/* Day counter */}
