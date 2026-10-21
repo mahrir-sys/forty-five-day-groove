@@ -10,33 +10,44 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicJobsEveningRemindersRouteImport } from './routes/api/public/jobs/evening-reminders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicJobsEveningRemindersRoute =
+  ApiPublicJobsEveningRemindersRouteImport.update({
+    id: '/api/public/jobs/evening-reminders',
+    path: '/api/public/jobs/evening-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/public/jobs/evening-reminders': typeof ApiPublicJobsEveningRemindersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/public/jobs/evening-reminders': typeof ApiPublicJobsEveningRemindersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/public/jobs/evening-reminders': typeof ApiPublicJobsEveningRemindersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/api/public/jobs/evening-reminders'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/api/public/jobs/evening-reminders'
+  id: '__root__' | '/' | '/api/public/jobs/evening-reminders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiPublicJobsEveningRemindersRoute: typeof ApiPublicJobsEveningRemindersRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +59,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/jobs/evening-reminders': {
+      id: '/api/public/jobs/evening-reminders'
+      path: '/api/public/jobs/evening-reminders'
+      fullPath: '/api/public/jobs/evening-reminders'
+      preLoaderRoute: typeof ApiPublicJobsEveningRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiPublicJobsEveningRemindersRoute: ApiPublicJobsEveningRemindersRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
