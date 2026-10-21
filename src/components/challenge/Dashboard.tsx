@@ -31,7 +31,7 @@ type Props = {
 
 
 export function Dashboard({ state, today, update }: Props) {
-  const { t, dateLocale } = useLanguage();
+  const { t, dateLocale, challengeName } = useLanguage();
   const reminders = useReminders(state);
   const install = useInstallApp();
   const start = state.startDate ?? today;
@@ -203,8 +203,8 @@ export function Dashboard({ state, today, update }: Props) {
                       >
                         {isDone && <Check className="size-4" strokeWidth={3} />}
                       </span>
-                      <span className={cn("flex-1 text-base font-semibold", isDone && "text-muted-foreground line-through decoration-primary/60")}>
-                        {c.name}
+                      <span className={cn("min-w-0 flex-1 break-words text-base font-semibold", isDone && "text-muted-foreground line-through decoration-primary/60")}>
+                        {challengeName(c.name)}
                       </span>
                     </button>
                   </li>

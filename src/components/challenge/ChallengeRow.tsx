@@ -11,7 +11,7 @@ type Props = {
 };
 
 export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
-  const { t } = useLanguage();
+  const { t, challengeName } = useLanguage();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(c.name);
 
@@ -52,7 +52,7 @@ export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
 
   return (
     <div className="flex items-center gap-1 rounded-xl border bg-background px-4 py-3">
-      <span className="flex-1 font-medium">{c.name}</span>
+      <span className="min-w-0 flex-1 break-words font-medium">{challengeName(c.name)}</span>
       <button
         type="button"
         onClick={() => {
@@ -60,7 +60,7 @@ export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
           setEditing(true);
         }}
         className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-        aria-label={t("rename", { name: c.name })}
+        aria-label={t("rename", { name: challengeName(c.name) })}
       >
         <Pencil className="size-4" />
       </button>
@@ -68,7 +68,7 @@ export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
         type="button"
         onClick={onRemove}
         className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-destructive"
-        aria-label={t("remove", { name: c.name })}
+        aria-label={t("remove", { name: challengeName(c.name) })}
       >
         <Trash2 className="size-4" />
       </button>

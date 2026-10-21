@@ -80,12 +80,36 @@ export type Database = {
         }
         Relationships: []
       }
+      translation_service_state: {
+        Row: {
+          id: boolean
+          paused_message: string | null
+          paused_status: number | null
+          request_count: number
+          usage_date: string
+        }
+        Insert: {
+          id?: boolean
+          paused_message?: string | null
+          paused_status?: number | null
+          request_count?: number
+          usage_date?: string
+        }
+        Update: {
+          id?: boolean
+          paused_message?: string | null
+          paused_status?: number | null
+          request_count?: number
+          usage_date?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_translation_request: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never

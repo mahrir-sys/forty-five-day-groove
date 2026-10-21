@@ -1,6 +1,6 @@
 import { getSuggestions } from "@/lib/i18n";
 import { LanguageSelect } from "./LanguageSelect";
-import { useLanguage } from "@/hooks/use-language";
+import { useChallengeNames, useLanguage } from "@/hooks/use-language";
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,21 +14,22 @@ type Props = {
 };
 
 export function Onboarding({ today, onStart }: Props) {
-  const { t, language } = useLanguage();
+  const { t, language, challengeName } = useLanguage();
   const [items, setItems] = useState<Challenge[]>([]);
+  useChallengeNames(items.map((item) => item.name));
   const [text, setText] = useState("");
   const [startDate, setStartDate] = useState(today);
 
   const add = (name: string) => {
     const trimmed = name.trim();
     if (!trimmed) return;
-    if (items.some((i) => i.name.toLowerCase() === trimmed.toLowerCase())) return;
+    if (items.some((i) => challengeName(i.name).toLowerCase() === trimmed.toLowerCase())) return;
     setItems((prev) => [...prev, { id: crypto.randomUUID(), name: trimmed }]);
     setText("");
   };
 
   const unused = getSuggestions(language).filter(
-    (s) => !items.some((i) => i.name.toLowerCase() === s.toLowerCase()),
+    (s) => !items.some((i) => challengeName(i.name).toLowerCase() === s.toLowerCase()),
   );
 
   return (
@@ -80,12 +81,12 @@ export function Onboarding({ today, onStart }: Props) {
                   <span className="font-display text-sm font-bold text-primary">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="flex-1 font-medium">{item.name}</span>
+                  <span className="min-w-0 flex-1 break-words font-medium">{challengeName(item.name)}</span>
                   <button
                     type="button"
                     onClick={() => setItems((prev) => prev.filter((p) => p.id !== item.id))}
                     className="rounded-full p-1 text-muted-foreground transition-colors hover:text-foreground"
-                    aria-label={t("remove", { name: item.name })}
+                    aria-label={t("remove", { name: challengeName(item.name) })}
                   >
                     <X className="size-4" />
                   </button>

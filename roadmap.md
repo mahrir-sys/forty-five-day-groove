@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Translate all added challenge names, including custom names, while preserving progress
+
 - [x] English default, Swedish and French language selection with localized challenge suggestions
 
 - [x] Installable Android app: app info file and icons

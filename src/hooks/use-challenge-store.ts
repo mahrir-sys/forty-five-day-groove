@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { emptyState, toISODate, type AppState } from "@/lib/challenge";
+import { useChallengeNames } from "./use-language";
 
 const STORAGE_KEY = "utmaning45:v1";
 
@@ -21,6 +22,7 @@ function load(): AppState {
 /** Challenge state persisted in this browser's localStorage. */
 export function useChallengeStore() {
   const [state, setState] = useState<AppState>(emptyState);
+  useChallengeNames(state.challenges.map((challenge) => challenge.name));
   const [loaded, setLoaded] = useState(false);
   const [today, setToday] = useState<string | null>(null);
 
