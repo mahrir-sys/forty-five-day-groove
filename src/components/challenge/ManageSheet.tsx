@@ -22,16 +22,18 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { TOTAL_DAYS, type Challenge } from "@/lib/challenge";
+import { ChallengeRow } from "./ChallengeRow";
 
 type Props = {
   challenges: Challenge[];
   onAdd: (name: string) => void;
+  onRename: (id: string, name: string) => void;
   onRemove: (id: string) => void;
   onRestart: () => void;
   onReset: () => void;
 };
 
-export function ManageSheet({ challenges, onAdd, onRemove, onRestart, onReset }: Props) {
+export function ManageSheet({ challenges, onAdd, onRename, onRemove, onRestart, onReset }: Props) {
   const [text, setText] = useState("");
 
   return (
@@ -70,16 +72,8 @@ export function ManageSheet({ challenges, onAdd, onRemove, onRestart, onReset }:
 
         <ul className="mt-4 space-y-2">
           {challenges.map((c) => (
-            <li key={c.id} className="flex items-center gap-3 rounded-xl border bg-background px-4 py-3">
-              <span className="flex-1 font-medium">{c.name}</span>
-              <button
-                type="button"
-                onClick={() => onRemove(c.id)}
-                className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-destructive"
-                aria-label={`Ta bort ${c.name}`}
-              >
-                <Trash2 className="size-4" />
-              </button>
+            <li key={c.id}>
+              <ChallengeRow challenge={c} onRename={(name) => onRename(c.id, name)} onRemove={() => onRemove(c.id)} />
             </li>
           ))}
         </ul>
