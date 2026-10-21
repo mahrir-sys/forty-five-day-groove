@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeChallengeStats, type AppState } from "./challenge";
+import { computeChallengeStats, type AppState, type ChallengeStats } from "./challenge";
 
 const state: AppState = {
   startDate: "2026-10-01",
@@ -15,7 +15,7 @@ const state: AppState = {
 
 describe("statistik per utmaning", () => {
   it("räknar avbockade dagar och procent av passerade dagar", () => {
-    const [a, b] = computeChallengeStats(state, "2026-10-05");
+    const [a, b] = computeChallengeStats(state, "2026-10-05") as [ChallengeStats, ChallengeStats];
     expect(a.checkedDays).toBe(3);
     expect(a.percent).toBe(60);
     expect(b.checkedDays).toBe(4);
@@ -23,7 +23,7 @@ describe("statistik per utmaning", () => {
   });
 
   it("nuvarande och bästa streak", () => {
-    const [a, b] = computeChallengeStats(state, "2026-10-05");
+    const [a, b] = computeChallengeStats(state, "2026-10-05") as [ChallengeStats, ChallengeStats];
     expect(a.currentStreak).toBe(0);
     expect(a.bestStreak).toBe(3);
     expect(b.currentStreak).toBe(2);
@@ -31,7 +31,7 @@ describe("statistik per utmaning", () => {
   });
 
   it("dagens obockade dag bryter inte nuvarande streak", () => {
-    const [, b] = computeChallengeStats(state, "2026-10-06");
+    const [, b] = computeChallengeStats(state, "2026-10-06") as [ChallengeStats, ChallengeStats];
     expect(b.currentStreak).toBe(2);
   });
 });
