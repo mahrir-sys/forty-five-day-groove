@@ -55,6 +55,8 @@ export function Dashboard({ state, today, update }: Props) {
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
             {TOTAL_DAYS} dagar
           </p>
+          <div className="flex items-center gap-1">
+          <ReminderSheet reminders={reminders} install={install} />
           <ManageSheet
             challenges={state.challenges}
             onAdd={(name) =>
