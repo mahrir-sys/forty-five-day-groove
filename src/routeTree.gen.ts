@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StatistikRouteImport } from './routes/statistik'
 import { Route as ApiPublicJobsEveningRemindersRouteImport } from './routes/api/public/jobs/evening-reminders'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatistikRoute = StatistikRouteImport.update({
+  id: '/statistik',
+  path: '/statistik',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicJobsEveningRemindersRoute =
@@ -26,27 +32,31 @@ const ApiPublicJobsEveningRemindersRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/statistik': typeof StatistikRoute
   '/api/public/jobs/evening-reminders': typeof ApiPublicJobsEveningRemindersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/statistik': typeof StatistikRoute
   '/api/public/jobs/evening-reminders': typeof ApiPublicJobsEveningRemindersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/statistik': typeof StatistikRoute
   '/api/public/jobs/evening-reminders': typeof ApiPublicJobsEveningRemindersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/public/jobs/evening-reminders'
+  fullPaths: '/' | '/statistik' | '/api/public/jobs/evening-reminders'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/public/jobs/evening-reminders'
-  id: '__root__' | '/' | '/api/public/jobs/evening-reminders'
+  to: '/' | '/statistik' | '/api/public/jobs/evening-reminders'
+  id: '__root__' | '/' | '/statistik' | '/api/public/jobs/evening-reminders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  StatistikRoute: typeof StatistikRoute
   ApiPublicJobsEveningRemindersRoute: typeof ApiPublicJobsEveningRemindersRoute
 }
 
@@ -57,6 +67,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/statistik': {
+      id: '/statistik'
+      path: '/statistik'
+      fullPath: '/statistik'
+      preLoaderRoute: typeof StatistikRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/jobs/evening-reminders': {
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  StatistikRoute: StatistikRoute,
   ApiPublicJobsEveningRemindersRoute: ApiPublicJobsEveningRemindersRoute,
 }
 export const routeTree = rootRouteImport
