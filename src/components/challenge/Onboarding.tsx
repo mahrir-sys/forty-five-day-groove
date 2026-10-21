@@ -38,7 +38,7 @@ export function Onboarding({ today, onStart }: Props) {
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
           {t("Utmaningen")}
         </p>
-        <h1 className="mt-3 text-6xl font-extrabold leading-[0.9] tracking-tight">
+        <h1 className="mt-3 text-5xl font-extrabold leading-[0.95]">
           <span className="text-flame">{TOTAL_DAYS}</span> {t("dagar.")}
           <br />
           {t("Inga ursäkter.")}

@@ -8,10 +8,10 @@ import { computeChallengeStats, computeStats, TOTAL_DAYS } from "@/lib/challenge
 export const Route = createFileRoute("/statistik")({
   head: () => ({
     meta: [
-      { title: "Statistik – 45 dagar" },
-      { name: "description", content: "Se hur det går för varje utmaning: avbockade dagar, procent och streaks." },
-      { property: "og:title", content: "Statistik – 45 dagar" },
-      { property: "og:description", content: "Avbockade dagar, procent och streaks per utmaning." },
+      { title: "Challenge statistics – 45 days" },
+      { name: "description", content: "See completed days, percentages and streaks for each of your 45-day challenges." },
+      { property: "og:title", content: "Challenge statistics – 45 days" },
+      { property: "og:description", content: "Completed days, percentages and streaks for every challenge." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

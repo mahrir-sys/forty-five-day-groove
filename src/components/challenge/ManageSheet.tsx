@@ -85,7 +85,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onRestart, 
         <div className="mt-8 space-y-2 border-t pt-6 pb-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline" className="h-12 w-full justify-start rounded-xl bg-background">
+              <Button variant="outline" className="min-h-12 h-auto w-full justify-start whitespace-normal rounded-xl bg-background py-3 text-left">
                 <RotateCcw /> {t("restartPeriod", { days: TOTAL_DAYS })}
               </Button>
             </AlertDialogTrigger>

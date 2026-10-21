@@ -7,10 +7,11 @@ import { cn } from "@/lib/utils";
 import type { RemindersApi } from "@/hooks/use-reminders";
 import type { InstallApi } from "@/hooks/use-install-app";
 import type { ReminderStatus } from "@/lib/push-reminders";
+import type { MessageKey } from "@/lib/i18n";
 
 type Props = { reminders: RemindersApi; install: InstallApi };
 
-const STATUS: Record<ReminderStatus, { icon: ReactNode; title: string; text: string; tone: "on" | "warn" | "off" }> = {
+const STATUS: Record<ReminderStatus, { icon: ReactNode; title: MessageKey; text: MessageKey | ""; tone: "on" | "warn" | "off" }> = {
   loading: { icon: <Loader2 className="size-6 animate-spin" />, title: "Kollar notiser…", text: "", tone: "off" },
   on: {
     icon: <BellRing className="size-6" />,
@@ -78,8 +79,8 @@ export function ReminderSheet({ reminders, install }: Props) {
             {info.icon}
           </span>
           <div>
-            <p className="font-semibold">{t(info.title as import("@/lib/i18n").MessageKey)}</p>
-            {info.text && <p className="mt-1 text-sm text-muted-foreground">{t(info.text as import("@/lib/i18n").MessageKey)}</p>}
+            <p className="font-semibold">{t(info.title)}</p>
+            {info.text && <p className="mt-1 text-sm text-muted-foreground">{t(info.text)}</p>}
           </div>
         </div>
 
@@ -134,21 +135,19 @@ export function ReminderSheet({ reminders, install }: Props) {
           </h3>
           <ol className="mt-4 space-y-4">
             <Step n={1} title={t("Installera appen")}>
-              Öppna appens länk i Chrome. Tryck på <b>⋮</b> uppe till höger och välj <b>Installera app</b> eller{" "}
-              <b>Lägg till på startskärmen</b>.
+              {t("guideInstall")}
             </Step>
             <Step n={2} title={t("Öppna från hemskärmen")}>
-              Starta <b>45 dagar</b> från ikonen på hemskärmen, inte från Chrome.
+              {t("guideOpen")}
             </Step>
             <Step n={3} title={t("Tillåt notiser")}>
-              Tryck på klockan uppe till höger, sedan <b>{t("Slå på kvällspåminnelse")}</b>. Välj <b>Tillåt</b> när telefonen frågar.
+              {t("guideAllow")}
             </Step>
             <Step n={4} title={t("Om notiser är blockerade")}>
-              Håll fingret på appikonen och välj <b>Appinfo</b> → <b>Aviseringar</b> → slå på. Använder du appen i Chrome:
-              tryck på <b>⋮</b> → <b>Inställningar</b> → <b>Webbplatsinställningar</b> → <b>Aviseringar</b> och tillåt appen.
+              {t("guideBlocked")}
             </Step>
             <Step n={5} title={t("Testa")}>
-              Tryck på <b>{t("Skicka testnotis")}</b>. Kommer notisen fram är du klar.
+              {t("guideTest")}
             </Step>
           </ol>
           <p className="mt-5 rounded-xl bg-secondary p-3 text-sm text-muted-foreground">
