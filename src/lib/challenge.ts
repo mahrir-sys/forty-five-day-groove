@@ -121,3 +121,54 @@ export function computeStats(state: AppState, today: string): Stats {
 
   return { currentDay, completedDays, missedDays, streak, percent };
 }
+
+export type ChallengeStats = {
+  id: string;
+  name: string;
+  /** Days this challenge was checked, within the period up to today */
+  checkedDays: number;
+  /** Elapsed days in the period (including today) */
+  elapsedDays: number;
+  /** checkedDays / elapsedDays, 0..100 */
+  percent: number;
+  currentStreak: number;
+  bestStreak: number;
+};
+
+export function computeChallengeStats(state: AppState, today: string): ChallengeStats[] {
+  const start = state.startDate;
+  return state.challenges.map((c) => {
+    if (!start) {
+      return { id: c.id, name: c.name, checkedDays: 0, elapsedDays: 0, percent: 0, currentStreak: 0, bestStreak: 0 };
+    }
+    const todayN = dayNumber(start, today);
+    const elapsed = Math.max(0, Math.min(TOTAL_DAYS, todayN));
+    const has = (n: number) => (state.log[addDays(start, n - 1)] ?? []).includes(c.id);
+    let checked = 0;
+    let best = 0;
+    let run = 0;
+    for (let n = 1; n <= elapsed; n++) {
+      if (has(n)) {
+        checked++;
+        run++;
+        best = Math.max(best, run);
+      } else run = 0;
+    }
+    let current = 0;
+    let n = elapsed;
+    if (n >= 1 && n === todayN && !has(n)) n--;
+    while (n >= 1 && has(n)) {
+      current++;
+      n--;
+    }
+    return {
+      id: c.id,
+      name: c.name,
+      checkedDays: checked,
+      elapsedDays: elapsed,
+      percent: elapsed === 0 ? 0 : Math.round((checked / elapsed) * 100),
+      currentStreak: current,
+      bestStreak: best,
+    };
+  });
+}
