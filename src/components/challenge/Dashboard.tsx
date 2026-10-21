@@ -1,7 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { format } from "date-fns";
 import { sv } from "date-fns/locale";
-import { Check, ChevronLeft, ChevronRight, Flame, Trophy } from "lucide-react";
+import { BarChart3, Check, ChevronLeft, ChevronRight, Flame, Trophy } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import {
   addDays,
@@ -61,6 +62,13 @@ export function Dashboard({ state, today, update }: Props) {
             {TOTAL_DAYS} dagar
           </p>
           <div className="flex items-center gap-1">
+          <Link
+            to="/statistik"
+            aria-label="Statistik"
+            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+          >
+            <BarChart3 className="size-5" />
+          </Link>
           <ReminderSheet reminders={reminders} install={install} />
           <ManageSheet
             challenges={state.challenges}
