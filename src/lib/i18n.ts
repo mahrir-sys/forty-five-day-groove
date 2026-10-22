@@ -259,6 +259,16 @@ const messages = {
     "sv": "Spara namn",
     "fr": "Enregistrer le nom"
   },
+  "Flytta upp": {
+    "en": "Move up",
+    "sv": "Flytta upp",
+    "fr": "Monter"
+  },
+  "Flytta ner": {
+    "en": "Move down",
+    "sv": "Flytta ner",
+    "fr": "Descendre"
+  },
   "Tillbaka": {
     "en": "Back",
     "sv": "Tillbaka",
