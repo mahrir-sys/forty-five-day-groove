@@ -8,7 +8,7 @@ export async function translateNames(names: string[]) {
   const { data: blocked, error } = await db.rpc("claim_translation_request");
   if (error) return { translations: {}, error: "Translation is temporarily unavailable.", status: 503 };
   if (blocked) return { translations: {}, error: blocked, status: 403 };
-  const key = process.env.LOVABLE_API_KEY;
+  const key = process.env['LOVABLE_API_KEY'];
   if (!key) return { translations: {}, error: "AI translation is not configured.", status: 401 };
   try {
     const { result } = createResponsesCall(getRequest(), {
