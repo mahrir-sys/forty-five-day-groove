@@ -172,3 +172,14 @@ export function computeChallengeStats(state: AppState, today: string): Challenge
     };
   });
 }
+
+/** Moves a challenge one step up (-1) or down (+1); ids and log are untouched. */
+export function moveChallenge(state: AppState, id: string, dir: -1 | 1): AppState {
+  const i = state.challenges.findIndex((c) => c.id === id);
+  const j = i + dir;
+  if (i < 0 || j < 0 || j >= state.challenges.length) return state;
+  const challenges = [...state.challenges];
+  const [moved] = challenges.splice(i, 1);
+  challenges.splice(j, 0, moved!);
+  return { ...state, challenges };
+}

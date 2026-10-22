@@ -31,11 +31,12 @@ type Props = {
   onAdd: (name: string) => void;
   onRename: (id: string, name: string) => void;
   onRemove: (id: string) => void;
+  onMove: (id: string, dir: -1 | 1) => void;
   onRestart: () => void;
   onReset: () => void;
 };
 
-export function ManageSheet({ challenges, onAdd, onRename, onRemove, onRestart, onReset }: Props) {
+export function ManageSheet({ challenges, onAdd, onRename, onRemove, onMove, onRestart, onReset }: Props) {
   const { t } = useLanguage();
   const [text, setText] = useState("");
 
@@ -75,9 +76,16 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onRestart, 
         </form>
 
         <ul className="mt-4 space-y-2">
-          {challenges.map((c) => (
+          {challenges.map((c, i) => (
             <li key={c.id}>
-              <ChallengeRow challenge={c} onRename={(name) => onRename(c.id, name)} onRemove={() => onRemove(c.id)} />
+              <ChallengeRow
+                challenge={c}
+                position={i + 1}
+                onRename={(name) => onRename(c.id, name)}
+                onRemove={() => onRemove(c.id)}
+                onMoveUp={i > 0 ? () => onMove(c.id, -1) : undefined}
+                onMoveDown={i < challenges.length - 1 ? () => onMove(c.id, 1) : undefined}
+              />
             </li>
           ))}
         </ul>
