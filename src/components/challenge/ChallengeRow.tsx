@@ -9,8 +9,8 @@ type Props = {
   position: number;
   onRename: (name: string) => void;
   onRemove: () => void;
-  onMoveUp?: () => void;
-  onMoveDown?: () => void;
+  onMoveUp?: (() => void) | undefined;
+  onMoveDown?: (() => void) | undefined;
 };
 
 export function ChallengeRow({ challenge: c, position, onRename, onRemove, onMoveUp, onMoveDown }: Props) {
