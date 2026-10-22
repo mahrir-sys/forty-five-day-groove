@@ -8,8 +8,13 @@ export function standardNameTranslations(name: string): NameTranslations | undef
   const normalized = name.trim().toLocaleLowerCase();
   for (const language of LANGUAGES) {
     const index = getSuggestions(language).findIndex((item) => item.toLocaleLowerCase() === normalized);
-    if (index >= 0) return { en: getSuggestions("en")[index], sv: getSuggestions("sv")[index], fr: getSuggestions("fr")[index] };
+    if (index < 0) continue;
+    const en = getSuggestions("en")[index];
+    const sv = getSuggestions("sv")[index];
+    const fr = getSuggestions("fr")[index];
+    if (en !== undefined && sv !== undefined && fr !== undefined) return { en, sv, fr };
   }
+  return undefined;
 }
 
 export function displayChallengeName(name: string, language: Language, cache: NameCache): string {
