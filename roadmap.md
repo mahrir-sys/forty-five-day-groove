@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] App named "45 days" everywhere: install manifest, page titles and notifications
+
 - [x] Translate all added challenge names, including custom names, while preserving progress
 
 - [x] English default, Swedish and French language selection with localized challenge suggestions
