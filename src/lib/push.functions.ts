@@ -112,7 +112,7 @@ export const sendTestReminder = createServerFn({ method: "POST" })
     if (!device) return { ok: false, reason: "not-registered" as const };
     const { privateJwk } = await getPushKeys();
     const result = await sendPush(privateJwk, device, {
-      title: "Testnotis från 45 dagar",
+      title: "Test notification from 45 days",
       body: "Det fungerar! Så här ser kvällspåminnelsen ut.",
       tag: "test",
     });

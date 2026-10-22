@@ -1,9 +1,9 @@
 {
   "id": "/",
-  "name": "45 dagar",
-  "short_name": "45 dagar",
-  "description": "Din personliga 45-dagarsutmaning. Bocka av dina utmaningar varje dag.",
-  "lang": "sv",
+  "name": "45 days",
+  "short_name": "45 days",
+  "description": "Your personal 45-day challenge. Tick off your challenges every day.",
+  "lang": "en",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

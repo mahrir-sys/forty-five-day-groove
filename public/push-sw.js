@@ -10,7 +10,7 @@ self.addEventListener("push", (event) => {
     data = { body: event.data ? event.data.text() : "" };
   }
   event.waitUntil(
-    self.registration.showNotification(data.title || "45 dagar", {
+    self.registration.showNotification(data.title || "45 days", {
       body: data.body || "",
       icon: "/icons/icon-192.png",
       badge: "/icons/badge-96.png",
