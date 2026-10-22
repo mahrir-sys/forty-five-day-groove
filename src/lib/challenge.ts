@@ -179,6 +179,7 @@ export function moveChallenge(state: AppState, id: string, dir: -1 | 1): AppStat
   const j = i + dir;
   if (i < 0 || j < 0 || j >= state.challenges.length) return state;
   const challenges = [...state.challenges];
-  [challenges[i], challenges[j]] = [challenges[j], challenges[i]];
+  const [moved] = challenges.splice(i, 1);
+  challenges.splice(j, 0, moved!);
   return { ...state, challenges };
 }
