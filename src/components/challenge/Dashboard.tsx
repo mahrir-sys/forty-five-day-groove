@@ -12,6 +12,7 @@ import {
   dayProgress,
   endDate,
   parseISODate,
+  moveChallenge,
   periodStatus,
   toggleCheck,
   TOTAL_DAYS,
@@ -90,6 +91,7 @@ export function Dashboard({ state, today, update }: Props) {
             onRemove={(id) =>
               update((s) => ({ ...s, challenges: s.challenges.filter((c) => c.id !== id) }))
             }
+            onMove={(id, dir) => update((s) => moveChallenge(s, id, dir))}
             onRestart={() => update((s) => ({ ...s, startDate: today, log: {} }))}
             onReset={() => update(() => ({ startDate: null, challenges: [], log: {} }))}
           />
@@ -181,7 +183,7 @@ export function Dashboard({ state, today, update }: Props) {
             </p>
           ) : (
             <ul className="mt-4 space-y-2">
-              {state.challenges.map((c) => {
+              {state.challenges.map((c, i) => {
                 const isDone = checked.has(c.id);
                 return (
                   <li key={c.id}>
@@ -204,6 +206,7 @@ export function Dashboard({ state, today, update }: Props) {
                         {isDone && <Check className="size-4" strokeWidth={3} />}
                       </span>
                       <span className={cn("min-w-0 flex-1 break-words text-base font-semibold", isDone && "text-muted-foreground line-through decoration-primary/60")}>
+                        <span className="mr-2 font-display tabular-nums text-primary">{i + 1}.</span>
                         {challengeName(c.name)}
                       </span>
                     </button>

@@ -1,16 +1,19 @@
 import { useLanguage } from "@/hooks/use-language";
 import { useState } from "react";
-import { Check, Pencil, Trash2, X } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Pencil, Trash2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import type { Challenge } from "@/lib/challenge";
 
 type Props = {
   challenge: Challenge;
+  position: number;
   onRename: (name: string) => void;
   onRemove: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
 };
 
-export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
+export function ChallengeRow({ challenge: c, position, onRename, onRemove, onMoveUp, onMoveDown }: Props) {
   const { t, challengeName } = useLanguage();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(c.name);
@@ -51,7 +54,16 @@ export function ChallengeRow({ challenge: c, onRename, onRemove }: Props) {
   }
 
   return (
-    <div className="flex items-center gap-1 rounded-xl border bg-background px-4 py-3">
+    <div className="flex items-center gap-1 rounded-xl border bg-background py-2 pl-2 pr-3">
+      <div className="flex flex-col">
+        <button type="button" onClick={onMoveUp} disabled={!onMoveUp} className="rounded p-0.5 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-25" aria-label={t("Flytta upp")}>
+          <ChevronUp className="size-4" />
+        </button>
+        <button type="button" onClick={onMoveDown} disabled={!onMoveDown} className="rounded p-0.5 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-25" aria-label={t("Flytta ner")}>
+          <ChevronDown className="size-4" />
+        </button>
+      </div>
+      <span className="w-6 shrink-0 text-center font-display font-extrabold tabular-nums text-primary">{position}</span>
       <span className="min-w-0 flex-1 break-words font-medium">{challengeName(c.name)}</span>
       <button
         type="button"

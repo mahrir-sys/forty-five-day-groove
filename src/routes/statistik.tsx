@@ -63,10 +63,10 @@ function StatsPage() {
                   {t("Inga utmaningar än.")}
                 </p>
               )}
-              {items.map((c) => (
+              {items.map((c, i) => (
                 <article key={c.id} className="rounded-2xl border bg-card p-4">
                   <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="min-w-0 break-words text-lg font-bold">{challengeName(c.name)}</h3>
+                    <h3 className="min-w-0 break-words text-lg font-bold"><span className="mr-2 text-primary tabular-nums">{i + 1}.</span>{challengeName(c.name)}</h3>
                     <span className="shrink-0 font-display text-2xl font-extrabold tabular-nums text-primary">
                       {c.percent}%
                     </span>
