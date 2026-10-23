@@ -180,6 +180,19 @@ export function moveChallenge(state: AppState, id: string, dir: -1 | 1): AppStat
   if (i < 0 || j < 0 || j >= state.challenges.length) return state;
   const challenges = [...state.challenges];
   const [moved] = challenges.splice(i, 1);
-  challenges.splice(j, 0, moved!);
+  if (!moved) return state;
+  challenges.splice(j, 0, moved);
+  return { ...state, challenges };
+}
+
+/** Reorder by stable ids; numbering is derived by the UI and history is untouched. */
+export function reorderChallenge(state: AppState, activeId: string, overId: string): AppState {
+  const from = state.challenges.findIndex((c) => c.id === activeId);
+  const to = state.challenges.findIndex((c) => c.id === overId);
+  if (from < 0 || to < 0 || from === to) return state;
+  const challenges = [...state.challenges];
+  const [moved] = challenges.splice(from, 1);
+  if (!moved) return state;
+  challenges.splice(to, 0, moved);
   return { ...state, challenges };
 }

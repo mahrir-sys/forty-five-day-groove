@@ -1,0 +1,2 @@
+ALTER TABLE public.push_devices ADD COLUMN completed_dates text[];
+COMMENT ON COLUMN public.push_devices.completed_dates IS 'Dates when all current challenges are checked; NULL means legacy device awaiting sync.';
