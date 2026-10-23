@@ -1,6 +1,8 @@
 import { LanguageSelect } from "./LanguageSelect";
 import { useLanguage } from "@/hooks/use-language";
 import { useState } from "react";
+import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Plus, RotateCcw, Settings2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,14 +33,18 @@ type Props = {
   onAdd: (name: string) => void;
   onRename: (id: string, name: string) => void;
   onRemove: (id: string) => void;
-  onMove: (id: string, dir: -1 | 1) => void;
+  onReorder: (activeId: string, overId: string) => void;
   onRestart: () => void;
   onReset: () => void;
 };
 
-export function ManageSheet({ challenges, onAdd, onRename, onRemove, onMove, onRestart, onReset }: Props) {
+export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, onRestart, onReset }: Props) {
   const { t } = useLanguage();
   const [text, setText] = useState("");
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
 
   return (
     <Sheet>
@@ -75,6 +81,10 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onMove, onR
           </Button>
         </form>
 
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={({ active, over }) => {
+          if (over && active.id !== over.id) onReorder(String(active.id), String(over.id));
+        }}>
+        <SortableContext items={challenges.map((c) => c.id)} strategy={verticalListSortingStrategy}>
         <ul className="mt-4 space-y-2">
           {challenges.map((c, i) => (
             <li key={c.id}>
@@ -83,12 +93,12 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onMove, onR
                 position={i + 1}
                 onRename={(name) => onRename(c.id, name)}
                 onRemove={() => onRemove(c.id)}
-                onMoveUp={i > 0 ? () => onMove(c.id, -1) : undefined}
-                onMoveDown={i < challenges.length - 1 ? () => onMove(c.id, 1) : undefined}
               />
             </li>
           ))}
         </ul>
+        </SortableContext>
+        </DndContext>
 
         <div className="mt-8 space-y-2 border-t pt-6 pb-4">
           <AlertDialog>
@@ -139,6 +149,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onMove, onR
             </AlertDialogContent>
           </AlertDialog>
         </div>
+        <p className="pb-4 text-center text-xs text-muted-foreground">v1.1.0 · Made by MD</p>
       </SheetContent>
     </Sheet>
   );

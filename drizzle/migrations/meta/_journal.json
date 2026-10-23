@@ -8,6 +8,13 @@
       "when": 1792625812322,
       "tag": "0000_translation_safety",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792732082475,
+      "tag": "0001_reminder_completed_dates",
+      "breakpoints": true
     }
   ]
 }

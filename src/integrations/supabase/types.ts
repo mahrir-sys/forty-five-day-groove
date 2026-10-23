@@ -19,6 +19,7 @@ export type Database = {
           auth: string
           challenge_count: number
           checked_dates: string[]
+          completed_dates: string[] | null
           created_at: string
           endpoint: string
           id: string
@@ -33,6 +34,7 @@ export type Database = {
           auth: string
           challenge_count?: number
           checked_dates?: string[]
+          completed_dates?: string[] | null
           created_at?: string
           endpoint: string
           id: string
@@ -47,6 +49,7 @@ export type Database = {
           auth?: string
           challenge_count?: number
           checked_dates?: string[]
+          completed_dates?: string[] | null
           created_at?: string
           endpoint?: string
           id?: string
