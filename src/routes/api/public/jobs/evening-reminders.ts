@@ -3,7 +3,7 @@ import { authenticateCronRequest } from "@/integrations/supabase/cron-auth";
 import { localDateHour, shouldRemind } from "@/lib/reminder";
 
 // Called every hour by a scheduled job. Sends the evening reminder to phones where
-// nothing has been checked off today (see shouldRemind for the exact rule).
+// at least one challenge remains today (see shouldRemind for the exact rule).
 export const Route = createFileRoute("/api/public/jobs/evening-reminders")({
   server: {
     handlers: {
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/api/public/jobs/evening-reminders")({
         const db = await getAdmin();
         const { data: devices, error } = await db
           .from("push_devices")
-          .select("id, endpoint, p256dh, auth, timezone, start_date, challenge_count, checked_dates, last_reminded_on")
+          .select("id, endpoint, p256dh, auth, timezone, start_date, challenge_count, checked_dates, completed_dates, last_reminded_on")
           .not("start_date", "is", null)
           .gt("challenge_count", 0);
         if (error) return Response.json({ error: error.message }, { status: 500 });
@@ -29,6 +29,7 @@ export const Route = createFileRoute("/api/public/jobs/evening-reminders")({
                 startDate: d.start_date,
                 challengeCount: d.challenge_count,
                 checkedDates: d.checked_dates ?? [],
+                completedDates: d.completed_dates,
                 lastRemindedOn: d.last_reminded_on,
               },
               local,
@@ -44,8 +45,8 @@ export const Route = createFileRoute("/api/public/jobs/evening-reminders")({
           await Promise.all(
             due.slice(i, i + 6).map(async ({ d, local }) => {
               const result = await sendPush(privateJwk, d, {
-                title: "Dags att bocka av dagen",
-                body: "Du har inte bockat av något idag. Hinner du en utmaning innan dagen är slut?",
+                 title: "45 days – Dags att bocka av dagen",
+                 body: "Du har utmaningar kvar idag. Hinner du bocka av dem innan dagen är slut?",
                 url: "/",
                 tag: "evening-reminder",
               });

@@ -22,6 +22,7 @@ const snapshot = z.object({
   startDate: isoDate.nullable(),
   challengeCount: z.number().int().min(0).max(500),
   checkedDates: z.array(isoDate).max(60),
+  completedDates: z.array(isoDate).max(60).nullable().optional(),
 });
 
 const subscription = z.object({
@@ -60,6 +61,7 @@ export const saveReminderDevice = createServerFn({ method: "POST" })
       start_date: data.startDate,
       challenge_count: data.challengeCount,
       checked_dates: data.checkedDates,
+      completed_dates: data.completedDates ?? null,
       updated_at: new Date().toISOString(),
     });
     if (error) throw new Error(`Could not save reminder: ${error.message}`);
@@ -79,6 +81,7 @@ export const syncReminderDevice = createServerFn({ method: "POST" })
         start_date: data.startDate,
         challenge_count: data.challengeCount,
         checked_dates: data.checkedDates,
+        completed_dates: data.completedDates ?? null,
         updated_at: new Date().toISOString(),
       })
       .eq("id", data.deviceId)

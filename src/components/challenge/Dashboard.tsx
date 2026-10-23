@@ -12,7 +12,7 @@ import {
   dayProgress,
   endDate,
   parseISODate,
-  moveChallenge,
+  reorderChallenge,
   periodStatus,
   toggleCheck,
   TOTAL_DAYS,
@@ -91,7 +91,7 @@ export function Dashboard({ state, today, update }: Props) {
             onRemove={(id) =>
               update((s) => ({ ...s, challenges: s.challenges.filter((c) => c.id !== id) }))
             }
-            onMove={(id, dir) => update((s) => moveChallenge(s, id, dir))}
+            onReorder={(activeId, overId) => update((s) => reorderChallenge(s, activeId, overId))}
             onRestart={() => update((s) => ({ ...s, startDate: today, log: {} }))}
             onReset={() => update(() => ({ startDate: null, challenges: [], log: {} }))}
           />

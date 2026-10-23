@@ -15,6 +15,8 @@
 - Challenge rules (period length, day numbering, stats) live as pure functions in `src/lib/challenge.ts` with tests beside it; UI only calls them, so rules stay testable in one place.
 - App state is stored in the browser's localStorage via `src/hooks/use-challenge-store.ts`, read after hydration to avoid SSR mismatches; the backend never holds the full challenge data.
 - Evening reminder rules live in `src/lib/reminder.ts` (pure, tested) and are used both by the client snapshot and the hourly job, so "when to remind" has one source of truth.
+- Reminder snapshots preserve legacy checked dates and add completed dates; null uses the conservative legacy rule until the device syncs, so old installed clients remain compatible.
+- Challenge management uses dnd-kit handle-activated pointer and keyboard sorting with a pure id-based reorder helper, so touch scrolling and history stay independent of ordering.
 - Reminders use standard Web Push (VAPID via `@pushforge/builder`, workerd-safe); sender keys are generated server-side and stored in `push_keys`, so no secret passes through chat or code.
 - Devices have no login: each phone owns a random secret whose hash is stored in `push_devices`; all reads/writes go through server functions with the admin client (tables have RLS and no policies).
 - `public/push-sw.js` is notification-only (no fetch/caching) so it cannot serve stale app files; installability is manifest-only.

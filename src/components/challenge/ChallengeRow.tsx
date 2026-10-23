@@ -1,6 +1,10 @@
 import { useLanguage } from "@/hooks/use-language";
 import { useState } from "react";
-import { Check, ChevronDown, ChevronUp, Pencil, Trash2, X } from "lucide-react";
+import { Check, GripVertical, Pencil, Trash2, X } from "lucide-react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import type { Challenge } from "@/lib/challenge";
 
@@ -9,14 +13,13 @@ type Props = {
   position: number;
   onRename: (name: string) => void;
   onRemove: () => void;
-  onMoveUp?: (() => void) | undefined;
-  onMoveDown?: (() => void) | undefined;
 };
 
-export function ChallengeRow({ challenge: c, position, onRename, onRemove, onMoveUp, onMoveDown }: Props) {
+export function ChallengeRow({ challenge: c, position, onRename, onRemove }: Props) {
   const { t, challengeName } = useLanguage();
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(c.name);
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: c.id, disabled: editing });
 
   if (editing) {
     return (
@@ -35,10 +38,10 @@ export function ChallengeRow({ challenge: c, position, onRename, onRemove, onMov
           className="h-10 flex-1 rounded-lg text-base"
           aria-label={t("Nytt namn")}
         />
-        <button type="submit" className="rounded-full p-1.5 text-primary hover:bg-primary/15" aria-label={t("Spara namn")}>
+        <Button variant="ghost" size="icon" type="submit" className="shrink-0 rounded-full text-primary" aria-label={t("Spara namn")}>
           <Check className="size-4" />
-        </button>
-        <button
+        </Button>
+        <Button variant="ghost" size="icon"
           type="button"
           onClick={() => {
             setText(c.name);
@@ -48,24 +51,19 @@ export function ChallengeRow({ challenge: c, position, onRename, onRemove, onMov
           aria-label={t("Avbryt")}
         >
           <X className="size-4" />
-        </button>
+        </Button>
       </form>
     );
   }
 
   return (
-    <div className="flex items-center gap-1 rounded-xl border bg-background py-2 pl-2 pr-3">
-      <div className="flex flex-col">
-        <button type="button" onClick={onMoveUp} disabled={!onMoveUp} className="rounded p-0.5 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-25" aria-label={t("Flytta upp")}>
-          <ChevronUp className="size-4" />
-        </button>
-        <button type="button" onClick={onMoveDown} disabled={!onMoveDown} className="rounded p-0.5 text-muted-foreground hover:bg-secondary hover:text-foreground disabled:opacity-25" aria-label={t("Flytta ner")}>
-          <ChevronDown className="size-4" />
-        </button>
-      </div>
+    <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} className={cn("relative flex items-center gap-1 rounded-xl border bg-background py-2 pl-2 pr-3", isDragging && "z-10 border-primary shadow-lg")}>
+      <Button ref={setActivatorNodeRef} variant="ghost" size="icon" type="button" {...attributes} {...listeners} className="shrink-0 touch-none cursor-grab text-muted-foreground active:cursor-grabbing" aria-label={t("reorder", { name: challengeName(c.name) })} title={t("reorder", { name: challengeName(c.name) })}>
+        <GripVertical className="size-5" />
+      </Button>
       <span className="w-6 shrink-0 text-center font-display font-extrabold tabular-nums text-primary">{position}</span>
       <span className="min-w-0 flex-1 break-words font-medium">{challengeName(c.name)}</span>
-      <button
+      <Button variant="ghost" size="icon"
         type="button"
         onClick={() => {
           setText(c.name);
@@ -75,15 +73,15 @@ export function ChallengeRow({ challenge: c, position, onRename, onRemove, onMov
         aria-label={t("rename", { name: challengeName(c.name) })}
       >
         <Pencil className="size-4" />
-      </button>
-      <button
+      </Button>
+      <Button variant="ghost" size="icon"
         type="button"
         onClick={onRemove}
         className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-destructive/15 hover:text-destructive"
         aria-label={t("remove", { name: challengeName(c.name) })}
       >
         <Trash2 className="size-4" />
-      </button>
+      </Button>
     </div>
   );
 }

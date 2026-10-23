@@ -16,7 +16,7 @@ const STATUS: Record<ReminderStatus, { icon: ReactNode; title: MessageKey; text:
   on: {
     icon: <BellRing className="size-6" />,
     title: "Kvällspåminnelser är tillåtna",
-    text: "Du får en notis runt kl 20 de kvällar du inte har bockat av något. Missas den försöker appen igen kl 21.",
+    text: "reminderTiming",
     tone: "on",
   },
   off: {
@@ -62,7 +62,7 @@ export function ReminderSheet({ reminders, install }: Props) {
         <SheetHeader className="text-left">
           <SheetTitle className="font-display text-2xl">{t("Kvällspåminnelse")}</SheetTitle>
           <SheetDescription>
-            {t("Har du inte bockat av något när kvällen kommer får du en notis, även när appen är stängd.")}
+            {t("reminderSummary")}
           </SheetDescription>
         </SheetHeader>
 

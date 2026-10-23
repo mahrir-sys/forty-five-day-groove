@@ -6,6 +6,7 @@ export function resolveLanguage(value: unknown): Language {
   return LANGUAGES.find((language) => language === value) ?? DEFAULT_LANGUAGE;
 }
 const messages = {
+  "reorder": { "en": "Reorder {name}", "sv": "Ändra ordning på {name}", "fr": "Réorganiser {name}" },
   "translatingNames": { "en": "Translating…", "sv": "Översätter…", "fr": "Traduction…" },
   "translationFailed": { "en": "Could not translate challenge names. Please try again.", "sv": "Kunde inte översätta utmaningsnamnen. Försök igen.", "fr": "Impossible de traduire les noms des défis. Réessayez." },
   "retryTranslation": { "en": "Retry translation", "sv": "Försök översätta igen", "fr": "Réessayer la traduction" },
@@ -314,10 +315,10 @@ const messages = {
     "sv": "Kvällspåminnelser är tillåtna",
     "fr": "Les rappels du soir sont activés"
   },
-  "Du får en notis runt kl 20 de kvällar du inte har bockat av något. Missas den försöker appen igen kl 21.": {
-    "en": "You receive a notification around 8 pm on evenings when nothing is checked off. If missed, the app tries again at 9 pm.",
-    "sv": "Du får en notis runt kl 20 de kvällar du inte har bockat av något. Missas den försöker appen igen kl 21.",
-    "fr": "Vous recevez une notification vers 20 h si aucun défi n’est validé. En cas d’échec, l’application réessaie à 21 h."
+  "reminderTiming": {
+    "en": "You receive a notification around 9 pm if at least one challenge remains unchecked that day.",
+    "sv": "Du får en notis runt kl. 21 om minst en utmaning är kvar att bocka av den dagen.",
+    "fr": "Vous recevez une notification vers 21 h s’il reste au moins un défi à valider ce jour-là."
   },
   "Kvällspåminnelser är av": {
     "en": "Evening reminders are off",
@@ -369,10 +370,10 @@ const messages = {
     "sv": "Kvällspåminnelse",
     "fr": "Rappel du soir"
   },
-  "Har du inte bockat av något när kvällen kommer får du en notis, även när appen är stängd.": {
-    "en": "If nothing is checked off by evening, you receive a notification even when the app is closed.",
-    "sv": "Har du inte bockat av något när kvällen kommer får du en notis, även när appen är stängd.",
-    "fr": "Si aucun défi n’est validé le soir, vous recevez une notification, même lorsque l’application est fermée."
+  "reminderSummary": {
+    "en": "If at least one challenge remains at 9 pm, you receive a notification even when the app is closed.",
+    "sv": "Om minst en utmaning återstår kl. 21 får du en notis, även när appen är stängd.",
+    "fr": "S’il reste au moins un défi à 21 h, vous recevez une notification, même lorsque l’application est fermée."
   },
   "Slå på kvällspåminnelse": {
     "en": "Enable evening reminder",
