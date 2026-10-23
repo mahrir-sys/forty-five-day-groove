@@ -5,27 +5,37 @@ const device = (over: Partial<DeviceReminderState> = {}): DeviceReminderState =>
   startDate: "2026-10-10",
   challengeCount: 2,
   checkedDates: [],
+  completedDates: [],
   lastRemindedOn: null,
   ...over,
 });
 const today = "2026-10-21";
 
 describe("evening reminder", () => {
-  it("reminds at 20:00 when nothing is checked today", () => {
-    expect(shouldRemind(device(), { date: today, hour: 20 })).toBe(true);
+  it("does not remind at 20:00", () => {
+    expect(shouldRemind(device(), { date: today, hour: 20 })).toBe(false);
   });
 
-  it("gives a second chance at 21:00 if 20:00 did not go out", () => {
+  it("reminds at 21:00 when nothing is checked", () => {
     expect(shouldRemind(device(), { date: today, hour: 21 })).toBe(true);
   });
 
-  it("does not remind before 20:00 or after 21:59", () => {
+  it("does not remind before 21:00 or after 21:59", () => {
     expect(shouldRemind(device(), { date: today, hour: 19 })).toBe(false);
     expect(shouldRemind(device(), { date: today, hour: 22 })).toBe(false);
   });
 
-  it("does not remind when at least one challenge is checked today", () => {
-    expect(shouldRemind(device({ checkedDates: [today] }), { date: today, hour: 20 })).toBe(false);
+  it("reminds at 21 when one of two challenges remains", () => {
+    expect(shouldRemind(device({ checkedDates: [today], completedDates: [] }), { date: today, hour: 21 })).toBe(true);
+  });
+
+  it("does not remind when all challenges are complete", () => {
+    expect(shouldRemind(device({ checkedDates: [today], completedDates: [today] }), { date: today, hour: 21 })).toBe(false);
+  });
+
+  it("handles legacy snapshots conservatively until the phone syncs", () => {
+    expect(shouldRemind(device({ checkedDates: [today], completedDates: null }), { date: today, hour: 21 })).toBe(false);
+    expect(shouldRemind(device({ completedDates: null }), { date: today, hour: 21 })).toBe(true);
   });
 
   it("reminds only once per evening", () => {
@@ -33,14 +43,14 @@ describe("evening reminder", () => {
   });
 
   it("does not remind before the period starts or after day 45", () => {
-    expect(shouldRemind(device({ startDate: "2026-10-22" }), { date: today, hour: 20 })).toBe(false);
+    expect(shouldRemind(device({ startDate: "2026-10-22" }), { date: today, hour: 21 })).toBe(false);
     // Start 2026-09-06 → day 45 is 2026-10-20, so 2026-10-21 is day 46.
-    expect(shouldRemind(device({ startDate: "2026-09-06" }), { date: today, hour: 20 })).toBe(false);
-    expect(shouldRemind(device({ startDate: "2026-09-07" }), { date: today, hour: 20 })).toBe(true);
+    expect(shouldRemind(device({ startDate: "2026-09-06" }), { date: today, hour: 21 })).toBe(false);
+    expect(shouldRemind(device({ startDate: "2026-09-07" }), { date: today, hour: 21 })).toBe(true);
   });
 
   it("does not remind without challenges", () => {
-    expect(shouldRemind(device({ challengeCount: 0 }), { date: today, hour: 20 })).toBe(false);
+    expect(shouldRemind(device({ challengeCount: 0 }), { date: today, hour: 21 })).toBe(false);
   });
 });
 
@@ -58,6 +68,16 @@ describe("snapshot", () => {
       challenges: [{ id: "a", name: "Löpning" }],
       log: { "2026-10-11": ["a"], "2026-10-12": ["removed"], "2026-10-13": [], "2026-10-01": ["a"] },
     });
-    expect(snap).toEqual({ startDate: "2026-10-10", challengeCount: 1, checkedDates: ["2026-10-11"] });
+    expect(snap).toEqual({ startDate: "2026-10-10", challengeCount: 1, checkedDates: ["2026-10-11"], completedDates: ["2026-10-11"] });
+  });
+
+  it("distinguishes partial checks from all current challenges being complete", () => {
+    const snap = reminderSnapshot({
+      startDate: "2026-10-10",
+      challenges: [{ id: "a", name: "A" }, { id: "b", name: "B" }],
+      log: { "2026-10-10": ["a"], "2026-10-11": ["a", "b", "removed"] },
+    });
+    expect(snap.checkedDates).toEqual(["2026-10-10", "2026-10-11"]);
+    expect(snap.completedDates).toEqual(["2026-10-11"]);
   });
 });
