@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Project rules
+- Daily motivation uses a localized curated library and pure rules in `src/lib/motivation.ts`, with local date/hour and current challenge themes; this avoids sending progress to AI or charging for daily text.
 - App language is shared by a root LanguageProvider and stored independently after hydration; UI resolves challenge names through a display-only translation cache, never rewriting source names, challenge IDs or progress.
 - Challenge-name translations use tested pure helpers and a public, input-bounded server function with a private persisted safety gate; AI receives only names, returns all supported languages once, and results are cached locally to avoid repeat charges.
 - Challenge rules (period length, day numbering, stats) live as pure functions in `src/lib/challenge.ts` with tests beside it; UI only calls them, so rules stay testable in one place.

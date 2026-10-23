@@ -1,4 +1,5 @@
 import { LanguageSelect } from "./LanguageSelect";
+import { DailyMotivation } from "./DailyMotivation";
 import { useLanguage } from "@/hooks/use-language";
 import { useEffect, useState, type ReactNode } from "react";
 import { format } from "date-fns";
@@ -149,6 +150,7 @@ export function Dashboard({ state, today, update }: Props) {
         </section>
 
         {/* Checklist */}
+        <DailyMotivation state={state} today={today} />
         <section className="mt-8">
           <div className="flex items-center justify-between">
             <button

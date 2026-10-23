@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Daily localized inspiration tied to challenges, supportive recovery after an incomplete yesterday, and evening completion encouragement
+
 - [x] Drag-and-drop ordering with handles only, preserving progress and automatic numbering
 - [x] Discreet version number with Made by MD
 - [x] Reminder at 21 when at least one challenge remains; update explanations and tests
