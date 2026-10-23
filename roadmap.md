@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Drag-and-drop ordering with handles only, preserving progress and automatic numbering
+- [ ] Discreet version number with Made by MD
+- [ ] Reminder at 21 when at least one challenge remains; update explanations and tests
+
 - [x] App named "45 days" everywhere: install manifest, page titles and notifications
 
 - [x] Translate all added challenge names, including custom names, while preserving progress
