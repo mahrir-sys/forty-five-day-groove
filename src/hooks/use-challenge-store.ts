@@ -13,6 +13,7 @@ function load(): AppState {
       startDate: parsed.startDate ?? null,
       challenges: parsed.challenges ?? [],
       log: parsed.log ?? {},
+      reflections: parsed.reflections ?? {},
     };
   } catch {
     return emptyState;
