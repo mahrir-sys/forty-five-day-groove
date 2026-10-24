@@ -10,6 +10,9 @@
 <!-- LOVABLE:END -->
 
 ## Project rules
+- Engagement rules live in pure tested helpers; daily reflections stay in local state and never enter shared snapshots.
+- Partner sharing stores only date, period day, streak and daily totals; write access requires a hashed device secret, reads use a separate unguessable revocable capability and a narrow database function.
+- Coaching is evaluated on the first local opening per period/day, after three consecutive past misses of one challenge; milestones celebrate a fully checked milestone day once per period.
 - Daily motivation uses a localized curated library and pure rules in `src/lib/motivation.ts`, with local date/hour and current challenge themes; this avoids sending progress to AI or charging for daily text.
 - App language is shared by a root LanguageProvider and stored independently after hydration; UI resolves challenge names through a display-only translation cache, never rewriting source names, challenge IDs or progress.
 - Challenge-name translations use tested pure helpers and a public, input-bounded server function with a private persisted safety gate; AI receives only names, returns all supported languages once, and results are cached locally to avoid repeat charges.
