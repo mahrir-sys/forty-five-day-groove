@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StatistikRouteImport } from './routes/statistik'
+import { Route as PartnerTokenRouteImport } from './routes/partner.$token'
 import { Route as ApiPublicJobsEveningRemindersRouteImport } from './routes/api/public/jobs/evening-reminders'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const StatistikRoute = StatistikRouteImport.update({
   path: '/statistik',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PartnerTokenRoute = PartnerTokenRouteImport.update({
+  id: '/partner/$token',
+  path: '/partner/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicJobsEveningRemindersRoute =
   ApiPublicJobsEveningRemindersRouteImport.update({
     id: '/api/public/jobs/evening-reminders',
@@ -33,30 +39,47 @@ const ApiPublicJobsEveningRemindersRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/statistik': typeof StatistikRoute
+  '/partner/$token': typeof PartnerTokenRoute
   '/api/public/jobs/evening-reminders': typeof ApiPublicJobsEveningRemindersRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/statistik': typeof StatistikRoute
+  '/partner/$token': typeof PartnerTokenRoute
   '/api/public/jobs/evening-reminders': typeof ApiPublicJobsEveningRemindersRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/statistik': typeof StatistikRoute
+  '/partner/$token': typeof PartnerTokenRoute
   '/api/public/jobs/evening-reminders': typeof ApiPublicJobsEveningRemindersRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/statistik' | '/api/public/jobs/evening-reminders'
+  fullPaths:
+    | '/'
+    | '/statistik'
+    | '/partner/$token'
+    | '/api/public/jobs/evening-reminders'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/statistik' | '/api/public/jobs/evening-reminders'
-  id: '__root__' | '/' | '/statistik' | '/api/public/jobs/evening-reminders'
+  to:
+    | '/'
+    | '/statistik'
+    | '/partner/$token'
+    | '/api/public/jobs/evening-reminders'
+  id:
+    | '__root__'
+    | '/'
+    | '/statistik'
+    | '/partner/$token'
+    | '/api/public/jobs/evening-reminders'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   StatistikRoute: typeof StatistikRoute
+  PartnerTokenRoute: typeof PartnerTokenRoute
   ApiPublicJobsEveningRemindersRoute: typeof ApiPublicJobsEveningRemindersRoute
 }
 
@@ -76,6 +99,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StatistikRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/partner/$token': {
+      id: '/partner/$token'
+      path: '/partner/$token'
+      fullPath: '/partner/$token'
+      preLoaderRoute: typeof PartnerTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/jobs/evening-reminders': {
       id: '/api/public/jobs/evening-reminders'
       path: '/api/public/jobs/evening-reminders'
@@ -89,6 +119,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   StatistikRoute: StatistikRoute,
+  PartnerTokenRoute: PartnerTokenRoute,
   ApiPublicJobsEveningRemindersRoute: ApiPublicJobsEveningRemindersRoute,
 }
 export const routeTree = rootRouteImport
