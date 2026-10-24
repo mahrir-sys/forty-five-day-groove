@@ -78,7 +78,7 @@ export function Dashboard({ state, today, update }: Props) {
     if (isNew) checkFeedback(sound, vibration, final);
     if (final && date === today) void celebrate();
   };
-  if (focus) return <><FocusList state={state} today={today} onCheck={id => check(id, today)} onExit={() => setFocus(false)} /><CoachingAndMilestones state={state} today={today} /></>;
+  if (focus) return <><FocusList state={state} today={today} onCheck={id => check(id, today)} onExit={() => setFocus(false)} /><div hidden><PartnerSheet state={state} today={today} /></div><CoachingAndMilestones state={state} today={today} /></>;
 
   const selectedLabel =
     selected === today ? t("Idag") : selected === addDays(today, -1) ? t("Igår") : fmt(selected, "EEEE d MMM");
