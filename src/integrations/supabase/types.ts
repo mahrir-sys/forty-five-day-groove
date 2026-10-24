@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      partner_links: {
+        Row: {
+          id: string
+          owner_hash: string
+          read_token: string
+          snapshot: Json
+          updated_at: string
+        }
+        Insert: {
+          id: string
+          owner_hash: string
+          read_token: string
+          snapshot?: Json
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          owner_hash?: string
+          read_token?: string
+          snapshot?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       push_devices: {
         Row: {
           auth: string
@@ -113,6 +137,7 @@ export type Database = {
     }
     Functions: {
       claim_translation_request: { Args: never; Returns: string }
+      read_partner_status: { Args: { token: string }; Returns: Json }
     }
     Enums: {
       [_ in never]: never

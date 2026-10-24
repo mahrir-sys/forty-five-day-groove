@@ -1,5 +1,9 @@
 # Roadmap
 
+- [x] Daily local reflections, read-only partner link, and focus mode
+- [x] Check-off sound/haptics and milestone celebrations at days 7, 23, 40, 45
+- [x] Rotating recovery and daily-first-open challenge coaching after repeated misses
+
 - [x] Daily localized inspiration tied to challenges, supportive recovery after an incomplete yesterday, and evening completion encouragement
 
 - [x] Drag-and-drop ordering with handles only, preserving progress and automatic numbering

@@ -9,6 +9,8 @@ export type AppState = {
   challenges: Challenge[];
   /** date -> ids of challenges completed that day */
   log: Record<string, string[]>;
+  /** Optional private daily reflections; never included in shared snapshots. */
+  reflections?: Record<string, string>;
 };
 
 export const emptyState: AppState = { startDate: null, challenges: [], log: {} };

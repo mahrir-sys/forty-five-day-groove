@@ -1,4 +1,10 @@
 import { LanguageSelect } from "./LanguageSelect";
+import { Button } from "@/components/ui/button";
+import { Target } from "lucide-react";
+import { PartnerSheet } from "./PartnerSheet";
+import { Reflection, FeedbackControls, FocusList, CoachingAndMilestones } from "./DailyExtras";
+import { checkFeedback, celebrate } from "@/lib/check-feedback";
+import { engagementCopy } from "@/lib/engagement-copy";
 import { DailyMotivation } from "./DailyMotivation";
 import { useLanguage } from "@/hooks/use-language";
 import { useEffect, useState, type ReactNode } from "react";
@@ -33,7 +39,17 @@ type Props = {
 
 
 export function Dashboard({ state, today, update }: Props) {
-  const { t, dateLocale, challengeName } = useLanguage();
+   const { t, dateLocale, challengeName, language } = useLanguage();
+   const c = engagementCopy[language];
+   const [focus, setFocus] = useState(false);
+   const [sound, setSound] = useState(true);
+   const [vibration, setVibration] = useState(true);
+   const [feedbackReady, setFeedbackReady] = useState(false);
+   useEffect(() => {
+     try { const saved = JSON.parse(localStorage.getItem('45days:feedback') ?? 'null'); if (saved) { setSound(saved.sound !== false); setVibration(saved.vibration !== false); } } catch {}
+     setFeedbackReady(true);
+   }, []);
+   useEffect(() => { if (feedbackReady) { try { localStorage.setItem('45days:feedback', JSON.stringify({sound, vibration})); } catch {} } }, [sound, vibration, feedbackReady]);
   const reminders = useReminders(state);
   const install = useInstallApp();
   const start = state.startDate ?? today;
@@ -54,6 +70,15 @@ export function Dashboard({ state, today, update }: Props) {
   const canCheck = status !== "upcoming" && selected <= today;
   const allDone = total > 0 && done === total;
   const daysLeft = dayNumber(today, start) - 1;
+  const check = (id: string, date: string) => {
+    const isNew = !(state.log[date] ?? []).includes(id);
+    const progress = dayProgress(state, date);
+    const final = isNew && progress.total > 0 && progress.done + 1 === progress.total;
+    update(s => toggleCheck(s, date, id));
+    if (isNew) checkFeedback(sound, vibration, final);
+    if (final && date === today) void celebrate();
+  };
+  if (focus) return <><FocusList state={state} today={today} onCheck={id => check(id, today)} onExit={() => setFocus(false)} /><div hidden><PartnerSheet state={state} today={today} /></div><CoachingAndMilestones state={state} today={today} /></>;
 
   const selectedLabel =
     selected === today ? t("Idag") : selected === addDays(today, -1) ? t("Igår") : fmt(selected, "EEEE d MMM");
@@ -67,6 +92,8 @@ export function Dashboard({ state, today, update }: Props) {
             {TOTAL_DAYS} {t("days")}
           </p>
           <div className="flex items-center gap-1">
+          {status === 'active' && <Button variant="ghost" size="icon" aria-label={c.focus} title={c.focus} onClick={() => setFocus(true)}><Target /></Button>}
+          <PartnerSheet state={state} today={today} />
           <Link
             to="/statistik"
             aria-label={t("Statistik")}
@@ -151,7 +178,7 @@ export function Dashboard({ state, today, update }: Props) {
 
         {/* Checklist */}
         <DailyMotivation state={state} today={today} />
-        <section className="mt-8">
+        <section id="today-list" className="mt-8">
           <div className="flex items-center justify-between">
             <button
               type="button"
@@ -192,7 +219,7 @@ export function Dashboard({ state, today, update }: Props) {
                     <button
                       type="button"
                       disabled={!canCheck}
-                      onClick={() => update((s) => toggleCheck(s, selected, c.id))}
+                      onClick={() => check(c.id, selected)}
                       aria-pressed={isDone}
                       className={cn(
                         "flex w-full items-center gap-4 rounded-2xl border px-4 py-4 text-left transition-all active:scale-[0.99] disabled:opacity-50",
@@ -224,6 +251,10 @@ export function Dashboard({ state, today, update }: Props) {
             </p>
           )}
         </section>
+
+        {canCheck && <Reflection state={state} date={selected} update={update} />}
+        <FeedbackControls sound={sound} vibration={vibration} setSound={setSound} setVibration={setVibration} />
+        <CoachingAndMilestones state={state} today={today} />
 
         {/* Overview */}
         <section className="mt-10">

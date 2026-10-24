@@ -26,11 +26,23 @@ const quotes: Record<Theme, Text[]> = {
   ],
 };
 
-const recovery: Text = {
+const recovery: Text[] = [{
   en: "Yesterday wasn't fully completed, and that's okay. It doesn't erase your effort. Don't give up — today is another chance, one challenge at a time.",
   sv: "Igår blev inte allt klart, och det är okej. Det tar inte bort din ansträngning. Ge inte upp — idag är en ny chans, en utmaning i taget.",
   fr: "Tout n’a pas été terminé hier, et ce n’est pas grave. Cela n’efface pas vos efforts. N’abandonnez pas : aujourd’hui est une nouvelle chance, un défi à la fois.",
-};
+}, {
+  en: "Yesterday had unfinished steps. Start smaller today — coming back matters more than being perfect.",
+  sv: "Igår fanns steg kvar att ta. Börja mindre idag — att komma tillbaka betyder mer än att vara perfekt.",
+  fr: "Il restait des pas à faire hier. Commencez plus petit aujourd’hui : revenir compte plus que la perfection.",
+}, {
+  en: "You didn't finish everything yesterday. Your progress still counts. Give yourself a fresh start with one doable action.",
+  sv: "Du hann inte med allt igår. Dina framsteg räknas ändå. Ge dig en ny start med en liten handling du kan göra.",
+  fr: "Vous n’avez pas tout terminé hier. Vos progrès comptent toujours. Repartez avec une petite action réalisable.",
+}, {
+  en: "An incomplete yesterday isn't the end of your story. Be kind to yourself, adjust the plan and take the next step.",
+  sv: "En ofullständig gårdag är inte slutet på din berättelse. Var snäll mot dig själv, anpassa planen och ta nästa steg.",
+  fr: "Une journée incomplète n’est pas la fin de votre histoire. Soyez bienveillant, ajustez le plan et avancez d’un pas.",
+}];
 const celebrations: Text[] = [
   { en: "All your challenges are complete today. You showed up for yourself — let that be enough, and enjoy your evening.", sv: "Alla dina utmaningar är klara idag. Du fanns där för dig själv — låt det räcka och njut av kvällen.", fr: "Tous vos défis sont accomplis aujourd’hui. Vous avez été là pour vous-même : savourez cette réussite et votre soirée." },
   { en: "You turned today's intentions into action. Well done! Take a moment to feel proud and recharge for tomorrow.", sv: "Du gjorde dagens intentioner till handling. Starkt jobbat! Känn dig stolt en stund och samla kraft inför morgondagen.", fr: "Vous avez transformé vos intentions en actions. Bravo ! Prenez un moment pour savourer vos efforts et reprendre des forces pour demain." },
@@ -67,7 +79,7 @@ export function dailyMotivation(state: AppState, today: string, localHour: numbe
     theme,
     challengeId: challenge.id,
     inspiration: quote?.[language] ?? quotes.resolve[0]?.[language] ?? "",
-    recovery: yesterday >= state.startDate && !isDayComplete(state, yesterday) ? recovery[language] : null,
+    recovery: yesterday >= state.startDate && !isDayComplete(state, yesterday) ? recovery[index % recovery.length]?.[language] ?? null : null,
     celebration: localHour >= 18 && isDayComplete(state, today) ? celebration?.[language] ?? null : null,
   };
 }
