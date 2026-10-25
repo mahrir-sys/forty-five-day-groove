@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Recover the user's previously discussed pending feature list (blocked: the available chat history does not contain the discussion; needs the original conversation)
+- [ ] Implement local day rollover at 05:00 (confirmed pending requirement; not requested to build in this turn)
+
 - [x] Daily local reflections, read-only partner link, and focus mode
 - [x] Check-off sound/haptics and milestone celebrations at days 7, 23, 40, 45
 - [x] Rotating recovery and daily-first-open challenge coaching after repeated misses
