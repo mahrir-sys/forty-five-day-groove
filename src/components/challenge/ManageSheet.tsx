@@ -28,7 +28,16 @@ import {
 import { TOTAL_DAYS, type Challenge } from "@/lib/challenge";
 import { ChallengeRow } from "./ChallengeRow";
 
+import { FeedbackControls } from './DailyExtras';
+import { BackupControls } from './BackupControls';
+import { APP_BUILD } from '@/lib/build-info';
+import { settingsCopy } from '@/lib/settings-copy';
+import type { AppState } from '@/lib/challenge';
+import type { Backup } from '@/lib/backup';
 type Props = {
+  state: AppState; today: string; sound: boolean; vibration: boolean;
+  setSound: (value:boolean)=>void; setVibration: (value:boolean)=>void;
+  onName: (name:string)=>void; onRestore: (backup:Backup)=>void;
   challenges: Challenge[];
   onAdd: (name: string) => void;
   onRename: (id: string, name: string) => void;
@@ -38,8 +47,9 @@ type Props = {
   onReset: () => void;
 };
 
-export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, onRestart, onReset }: Props) {
-  const { t } = useLanguage();
+export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, onRestart, onReset, state, today, sound, vibration, setSound, setVibration, onName, onRestore }: Props) {
+  const { t, language } = useLanguage();
+  const copy = settingsCopy[language];
   const [text, setText] = useState("");
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -49,17 +59,19 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-full" aria-label={t("Hantera utmaningar")}>
+        <Button variant="ghost" size="icon" className="rounded-full" aria-label={copy.settings}>
           <Settings2 className="size-5" />
         </Button>
       </SheetTrigger>
       <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-3xl border-t bg-card">
         <SheetHeader className="text-left">
-          <SheetTitle className="font-display text-2xl">{t("Dina utmaningar")}</SheetTitle>
+          <SheetTitle className="font-display text-2xl">{copy.settings}</SheetTitle>
           <SheetDescription>{t("Lägg till eller ta bort. Ändringar gäller alla dagar.")}</SheetDescription>
         </SheetHeader>
 
         <div className="mt-5 flex items-center justify-between gap-3"><span className="text-sm text-muted-foreground">{t("language")}</span><LanguageSelect /></div>
+        <div className="mt-5"><label htmlFor="settings-name" className="text-sm text-muted-foreground">{copy.name}</label><Input id="settings-name" autoComplete="given-name" maxLength={60} value={state.firstName ?? ""} onChange={e=>onName(e.target.value)} className="mt-2" /></div>
+        <FeedbackControls sound={sound} vibration={vibration} setSound={setSound} setVibration={setVibration} />
         <form
           className="mt-5 flex gap-2"
           onSubmit={(e) => {
@@ -100,6 +112,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
         </SortableContext>
         </DndContext>
 
+        <BackupControls state={state} today={today} sound={sound} vibration={vibration} onRestore={onRestore} />
         <div className="mt-8 space-y-2 border-t pt-6 pb-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -149,7 +162,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
             </AlertDialogContent>
           </AlertDialog>
         </div>
-        <p className="pb-4 text-center text-xs text-muted-foreground">v1.1.0 · Made by MD</p>
+        <p className="pb-4 text-center text-xs text-muted-foreground">v{APP_BUILD.replace("T", " · ").replace(/:\d{2}\.\d{3}Z$/, " UTC")} · Made by MD</p>
       </SheetContent>
     </Sheet>
   );

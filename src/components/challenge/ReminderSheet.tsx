@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import type { RemindersApi } from "@/hooks/use-reminders";
 import type { InstallApi } from "@/hooks/use-install-app";
 import type { ReminderStatus } from "@/lib/push-reminders";
+import { settingsCopy } from "@/lib/settings-copy";
 import type { MessageKey } from "@/lib/i18n";
 
 type Props = { reminders: RemindersApi; install: InstallApi };
@@ -46,7 +47,8 @@ const STATUS: Record<ReminderStatus, { icon: ReactNode; title: MessageKey; text:
 };
 
 export function ReminderSheet({ reminders, install }: Props) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const c = settingsCopy[language];
   const { status, busy } = reminders;
   const info = STATUS[status];
 
@@ -60,9 +62,9 @@ export function ReminderSheet({ reminders, install }: Props) {
       </SheetTrigger>
       <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto rounded-t-3xl border-t bg-card">
         <SheetHeader className="text-left">
-          <SheetTitle className="font-display text-2xl">{t("Kvällspåminnelse")}</SheetTitle>
+          <SheetTitle className="font-display text-2xl">{t("Påminnelser")}</SheetTitle>
           <SheetDescription>
-            {t("reminderSummary")}
+            {c.summary}
           </SheetDescription>
         </SheetHeader>
 
@@ -79,15 +81,15 @@ export function ReminderSheet({ reminders, install }: Props) {
             {info.icon}
           </span>
           <div>
-            <p className="font-semibold">{t(info.title)}</p>
-            {info.text && <p className="mt-1 text-sm text-muted-foreground">{t(info.text)}</p>}
+            <p className="font-semibold">{status === "on" ? c.on : status === "off" ? c.off : t(info.title)}</p>
+            {info.text && <p className="mt-1 text-sm text-muted-foreground">{status === "on" ? c.timing : t(info.text)}</p>}
           </div>
         </div>
 
         <div className="mt-3 space-y-2">
           {status === "off" && (
             <Button className="h-12 w-full rounded-xl text-base" onClick={reminders.enable} disabled={busy}>
-              {busy ? <Loader2 className="animate-spin" /> : <BellRing />} {t("Slå på kvällspåminnelse")}
+              {busy ? <Loader2 className="animate-spin" /> : <BellRing />} {c.enable}
             </Button>
           )}
           {status === "on" && (
@@ -130,9 +132,7 @@ export function ReminderSheet({ reminders, install }: Props) {
         </div>
 
         <section className="mt-8 pb-6">
-          <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-            {t("Så slår du på notiser på Android")}
-          </h3>
+          <details className="border-t py-4"><summary className="cursor-pointer text-sm font-semibold">{c.android}</summary>
           <ol className="mt-4 space-y-4">
             <Step n={1} title={t("Installera appen")}>
               {t("guideInstall")}
@@ -141,7 +141,7 @@ export function ReminderSheet({ reminders, install }: Props) {
               {t("guideOpen")}
             </Step>
             <Step n={3} title={t("Tillåt notiser")}>
-              {t("guideAllow")}
+              {c.enable} → {t("Tillåt notiser")}
             </Step>
             <Step n={4} title={t("Om notiser är blockerade")}>
               {t("guideBlocked")}
@@ -152,7 +152,8 @@ export function ReminderSheet({ reminders, install }: Props) {
           </ol>
           <p className="mt-5 rounded-xl bg-secondary p-3 text-sm text-muted-foreground">
              {t("guideBattery")}
-           </p>
+           </p></details>
+          <details className="border-t py-4"><summary className="cursor-pointer text-sm font-semibold">{c.ios}</summary><p className="mt-4 text-sm leading-relaxed text-muted-foreground">{c.iosGuide}</p></details>
         </section>
       </SheetContent>
     </Sheet>
