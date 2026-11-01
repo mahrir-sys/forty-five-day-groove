@@ -14,10 +14,10 @@ import {
 
 /** Evening reminder state for this phone, kept in sync with the challenge progress. */
 export function useReminders(state: AppState) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [status, setStatus] = useState<ReminderStatus>("loading");
   const [busy, setBusy] = useState(false);
-  const snapshot = useMemo(() => reminderSnapshot(state), [state]);
+  const snapshot = useMemo(() => reminderSnapshot(state, language), [state, language]);
   const snapshotKey = JSON.stringify(snapshot);
 
   const refresh = useCallback(async () => {

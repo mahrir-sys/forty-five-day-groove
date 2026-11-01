@@ -1,5 +1,6 @@
 import { addDays, computeStats, dayNumber, dayProgress, isDayComplete, periodStatus, type AppState } from './challenge';
 export const MILESTONES = [7, 23, 40, 45] as const;
+export function canOpenDailyCoaching(localHour: number): boolean { return localHour >= 5; }
 export function milestone(state: AppState, today: string): number | null {
   if (!state.startDate || !isDayComplete(state, today)) return null;
   const day = dayNumber(state.startDate, today);

@@ -8,9 +8,11 @@ import { Input } from "@/components/ui/input";
 import { TOTAL_DAYS, type Challenge } from "@/lib/challenge";
 
 
+import { settingsCopy } from '@/lib/settings-copy';
+
 type Props = {
   today: string;
-  onStart: (challenges: Challenge[], startDate: string) => void;
+  onStart: (challenges: Challenge[], startDate: string, firstName: string) => void;
 };
 
 export function Onboarding({ today, onStart }: Props) {
@@ -18,6 +20,7 @@ export function Onboarding({ today, onStart }: Props) {
   const [items, setItems] = useState<Challenge[]>([]);
   useChallengeNames(items.map((item) => item.name));
   const [text, setText] = useState("");
+  const [firstName,setFirstName]=useState("");
   const [startDate, setStartDate] = useState(today);
 
   const add = (name: string) => {
@@ -48,6 +51,7 @@ export function Onboarding({ today, onStart }: Props) {
           {t("intro", { days: TOTAL_DAYS })}
         </p>
 
+        <section className="mt-8"><label htmlFor="first-name" className="text-sm font-semibold text-muted-foreground">{settingsCopy[language].name}</label><Input id="first-name" autoComplete="given-name" maxLength={60} value={firstName} onChange={e=>setFirstName(e.target.value)} className="mt-3 h-12 bg-card" /></section>
         <section className="mt-8">
           <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
             {t("Dina utmaningar")}
@@ -132,7 +136,7 @@ export function Onboarding({ today, onStart }: Props) {
           size="xl"
           className="mt-10 w-full"
           disabled={items.length === 0}
-          onClick={() => onStart(items, startDate)}
+          onClick={() => onStart(items, startDate, firstName.trim())}
         >
           {t("start", { days: TOTAL_DAYS })}
         </Button>

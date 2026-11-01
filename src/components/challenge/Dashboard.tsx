@@ -2,7 +2,7 @@ import { LanguageSelect } from "./LanguageSelect";
 import { Button } from "@/components/ui/button";
 import { Target } from "lucide-react";
 import { PartnerSheet } from "./PartnerSheet";
-import { Reflection, FeedbackControls, FocusList, CoachingAndMilestones } from "./DailyExtras";
+import { Reflection, FocusList, CoachingAndMilestones } from "./DailyExtras";
 import { checkFeedback, celebrate } from "@/lib/check-feedback";
 import { engagementCopy } from "@/lib/engagement-copy";
 import { DailyMotivation } from "./DailyMotivation";
@@ -39,7 +39,7 @@ type Props = {
 
 
 export function Dashboard({ state, today, update }: Props) {
-   const { t, dateLocale, challengeName, language } = useLanguage();
+   const { t, dateLocale, challengeName, language, setLanguage } = useLanguage();
    const c = engagementCopy[language];
    const [focus, setFocus] = useState(false);
    const [sound, setSound] = useState(true);
@@ -103,6 +103,10 @@ export function Dashboard({ state, today, update }: Props) {
           </Link>
           <ReminderSheet reminders={reminders} install={install} />
           <ManageSheet
+            state={state} today={today} sound={sound} vibration={vibration}
+            setSound={setSound} setVibration={setVibration}
+            onName={firstName=>update(s=>({...s,firstName}))}
+            onRestore={backup=>{update(()=>backup.state);setLanguage(backup.preferences.language);setSound(backup.preferences.sound);setVibration(backup.preferences.vibration);}}
             challenges={state.challenges}
             onAdd={(name) =>
               update((s) => ({
@@ -253,7 +257,6 @@ export function Dashboard({ state, today, update }: Props) {
         </section>
 
         {canCheck && <Reflection state={state} date={selected} update={update} />}
-        <FeedbackControls sound={sound} vibration={vibration} setSound={setSound} setVibration={setVibration} />
         <CoachingAndMilestones state={state} today={today} />
 
         {/* Overview */}

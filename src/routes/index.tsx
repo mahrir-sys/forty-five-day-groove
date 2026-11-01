@@ -32,7 +32,7 @@ function Index() {
     return (
       <Onboarding
         today={today}
-        onStart={(challenges, startDate) => update(() => ({ startDate, challenges, log: {} }))}
+        onStart={(challenges, startDate, firstName) => update(() => ({ startDate, challenges, firstName, log: {} }))}
       />
     );
   }

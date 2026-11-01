@@ -6,6 +6,7 @@ export type Challenge = { id: string; name: string };
 
 export type AppState = {
   startDate: string | null;
+  firstName?: string;
   challenges: Challenge[];
   /** date -> ids of challenges completed that day */
   log: Record<string, string[]>;
@@ -42,6 +43,12 @@ export function addDays(iso: string, n: number): string {
   const d = parseISODate(iso);
   d.setDate(d.getDate() + n);
   return toISODate(d);
+}
+
+/** Local day stays on yesterday until 05:00. */
+export function challengeDate(now: Date): string {
+ const date = toISODate(now);
+ return now.getHours() < 5 ? addDays(date, -1) : date;
 }
 
 /** Day number in the period (1 = start date). Can be <1 or >45. */

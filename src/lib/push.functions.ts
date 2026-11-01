@@ -19,6 +19,8 @@ const deviceAuth = z.object({ deviceId: z.string().uuid(), secret: z.string().mi
 
 const snapshot = z.object({
   timezone,
+  language: z.enum(["en","sv","fr"]).optional(),
+  firstName: z.string().trim().max(60).optional(),
   startDate: isoDate.nullable(),
   challengeCount: z.number().int().min(0).max(500),
   checkedDates: z.array(isoDate).max(60),
@@ -58,6 +60,8 @@ export const saveReminderDevice = createServerFn({ method: "POST" })
       p256dh: data.subscription.keys.p256dh,
       auth: data.subscription.keys.auth,
       timezone: data.timezone,
+      ...(data.language ? {language:data.language} : {}),
+      ...(data.firstName !== undefined ? {first_name:data.firstName} : {}),
       start_date: data.startDate,
       challenge_count: data.challengeCount,
       checked_dates: data.checkedDates,
@@ -78,6 +82,8 @@ export const syncReminderDevice = createServerFn({ method: "POST" })
       .from("push_devices")
       .update({
         timezone: data.timezone,
+      ...(data.language ? {language:data.language} : {}),
+      ...(data.firstName !== undefined ? {first_name:data.firstName} : {}),
         start_date: data.startDate,
         challenge_count: data.challengeCount,
         checked_dates: data.checkedDates,
@@ -108,17 +114,15 @@ export const sendTestReminder = createServerFn({ method: "POST" })
     const db = await getAdmin();
     const { data: device } = await db
       .from("push_devices")
-      .select("id, endpoint, p256dh, auth")
+      .select("id, endpoint, p256dh, auth, language, first_name, timezone")
       .eq("id", data.deviceId)
       .eq("secret_hash", await hashSecret(data.secret))
       .maybeSingle();
     if (!device) return { ok: false, reason: "not-registered" as const };
     const { privateJwk } = await getPushKeys();
-    const result = await sendPush(privateJwk, device, {
-      title: "Test notification from 45 days",
-      body: "Det fungerar! Så här ser kvällspåminnelsen ut.",
-      tag: "test",
-    });
+    const { reminderMessage, localDateHour } = await import('./reminder');
+    const { resolveLanguage } = await import('./i18n');
+    const result = await sendPush(privateJwk, device, reminderMessage('test',localDateHour(new Date(),device.timezone).date,resolveLanguage(device.language),device.first_name));
     if (result.gone) await db.from("push_devices").delete().eq("id", device.id);
     return result.ok
       ? { ok: true as const }

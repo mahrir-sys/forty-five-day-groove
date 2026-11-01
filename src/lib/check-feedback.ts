@@ -1,18 +1,18 @@
 let audio: AudioContext | undefined;
 export function checkFeedback(sound: boolean, vibration: boolean, final: boolean) {
-  if (vibration && typeof navigator.vibrate === 'function') navigator.vibrate(final ? [40,60,80] : 20);
+  if (vibration && typeof navigator.vibrate === 'function') navigator.vibrate(final ? [50,60,100] : 50);
   if (!sound) return;
   try {
     audio ??= new AudioContext();
     void audio.resume();
     const context = audio;
-    const notes = final ? [523,659,784] : [660];
+    const notes = final ? [523.25,659.25,783.99,1046.5,1318.51,1567.98] : [523.25,659.25,783.99];
     notes.forEach((frequency, i) => {
       const oscillator = context.createOscillator(); const gain = context.createGain();
-      const start = context.currentTime + i * .1;
+      const start = context.currentTime + (final ? i * .09 : 0);
       oscillator.frequency.value = frequency;
-      gain.gain.setValueAtTime(.0001, start); gain.gain.exponentialRampToValueAtTime(.08, start+.01); gain.gain.exponentialRampToValueAtTime(.0001,start+.16);
-      oscillator.connect(gain); gain.connect(context.destination); oscillator.start(start); oscillator.stop(start+.18);
+      gain.gain.setValueAtTime(.0001, start); gain.gain.exponentialRampToValueAtTime(.035, start+.02); gain.gain.exponentialRampToValueAtTime(.0001,start+(final ? .65 : .35));
+      oscillator.connect(gain); gain.connect(context.destination); oscillator.start(start); oscillator.stop(start+(final ? .7 : .4));
     });
   } catch { /* Unsupported or blocked audio must never block a check. */ }
 }

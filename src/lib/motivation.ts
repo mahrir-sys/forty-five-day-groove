@@ -1,6 +1,8 @@
 import { addDays, dayNumber, isDayComplete, periodStatus, type AppState } from "./challenge";
 import type { Language } from "./i18n";
 
+import { personalText } from './personalization';
+
 type Theme = "resolve" | "relationships" | "wellbeing" | "growth";
 type Text = Record<Language, string>;
 const quotes: Record<Theme, Text[]> = {
@@ -78,8 +80,8 @@ export function dailyMotivation(state: AppState, today: string, localHour: numbe
   return {
     theme,
     challengeId: challenge.id,
-    inspiration: quote?.[language] ?? quotes.resolve[0]?.[language] ?? "",
-    recovery: yesterday >= state.startDate && !isDayComplete(state, yesterday) ? recovery[index % recovery.length]?.[language] ?? null : null,
-    celebration: localHour >= 18 && isDayComplete(state, today) ? celebration?.[language] ?? null : null,
+    inspiration: personalText(quote?.[language] ?? quotes.resolve[0]?.[language] ?? "", state.firstName),
+    recovery: localHour >= 5 && yesterday >= state.startDate && !isDayComplete(state, yesterday) ? recovery[index % recovery.length]?.[language] ?? null : null,
+    celebration: (localHour >= 18 || localHour < 5) && isDayComplete(state, today) ? personalText(celebration?.[language] ?? "", state.firstName) : null,
   };
 }

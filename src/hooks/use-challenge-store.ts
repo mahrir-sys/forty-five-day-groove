@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { emptyState, toISODate, type AppState } from "@/lib/challenge";
+import { challengeDate, emptyState, type AppState } from "@/lib/challenge";
 import { useChallengeNames } from "./use-language";
 
 const STORAGE_KEY = "utmaning45:v1";
@@ -14,6 +14,7 @@ function load(): AppState {
       challenges: parsed.challenges ?? [],
       log: parsed.log ?? {},
       reflections: parsed.reflections ?? {},
+      firstName: typeof parsed.firstName === "string" ? parsed.firstName.trim().slice(0,60) : "",
     };
   } catch {
     return emptyState;
@@ -30,9 +31,9 @@ export function useChallengeStore() {
   useEffect(() => {
     setState(load());
     setLoaded(true);
-    const refresh = () => setToday(toISODate(new Date()));
+    const refresh = () => setToday(challengeDate(new Date()));
     refresh();
-    const timer = window.setInterval(refresh, 60_000);
+    const timer = window.setInterval(refresh, 1_000);
     document.addEventListener("visibilitychange", refresh);
     return () => {
       window.clearInterval(timer);

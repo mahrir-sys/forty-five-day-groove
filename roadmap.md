@@ -1,7 +1,13 @@
 # Roadmap
 
 - [ ] Recover the user's previously discussed pending feature list (blocked: the available chat history does not contain the discussion; needs the original conversation)
-- [ ] Implement local day rollover at 05:00 (confirmed pending requirement; not requested to build in this turn)
+- [x] Settings-only sound/vibration controls, 50 ms checks, triad and extended fanfare
+- [x] Automatic release version/build stamp
+- [x] Localized, personalized lunch reminder at 12 and evening reminder at 21
+- [x] Optional onboarding first name, editable only in Settings afterwards
+- [x] Collapsible Android and iPhone notification help
+- [x] Implement local day rollover at 05:00 including motivation and coaching
+- [x] Validated JSON backup and restore of local data
 
 - [x] Daily local reflections, read-only partner link, and focus mode
 - [x] Check-off sound/haptics and milestone celebrations at days 7, 23, 40, 45
