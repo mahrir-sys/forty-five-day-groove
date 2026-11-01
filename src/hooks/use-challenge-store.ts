@@ -33,7 +33,7 @@ export function useChallengeStore() {
     setLoaded(true);
     const refresh = () => setToday(challengeDate(new Date()));
     refresh();
-    const timer = window.setInterval(refresh, 60_000);
+    const timer = window.setInterval(refresh, 1_000);
     document.addEventListener("visibilitychange", refresh);
     return () => {
       window.clearInterval(timer);

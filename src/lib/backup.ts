@@ -10,7 +10,7 @@ export const appStateSchema = z.object({
  log:z.record(date,z.array(id).max(500)), reflections:z.record(date,z.string().max(1000)).optional()
 });
 const schema=z.object({app:z.literal('45 days'),version:z.literal(1),state:appStateSchema,preferences:z.object({language:z.enum(LANGUAGES),sound:z.boolean(),vibration:z.boolean()})});
-export type Backup=z.infer<typeof schema>;
+export type Backup={app:'45 days';version:1;state:AppState;preferences:{language:Language;sound:boolean;vibration:boolean}};
 export function makeBackup(state:AppState,language:Language,sound:boolean,vibration:boolean):Backup {return schema.parse({app:'45 days',version:1,state,preferences:{language,sound,vibration}});}
 export function parseBackup(text:string):Backup {if(new TextEncoder().encode(text).length>MAX_BACKUP_BYTES)throw new Error('Backup too large');return schema.parse(JSON.parse(text));}
 export function downloadBackup(backup:Backup,date:string){
