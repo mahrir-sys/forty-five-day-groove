@@ -46,7 +46,10 @@ export type Database = {
           completed_dates: string[] | null
           created_at: string
           endpoint: string
+          first_name: string
           id: string
+          language: string
+          last_lunch_reminded_on: string | null
           last_reminded_on: string | null
           p256dh: string
           secret_hash: string
@@ -61,7 +64,10 @@ export type Database = {
           completed_dates?: string[] | null
           created_at?: string
           endpoint: string
+          first_name?: string
           id: string
+          language?: string
+          last_lunch_reminded_on?: string | null
           last_reminded_on?: string | null
           p256dh: string
           secret_hash: string
@@ -76,7 +82,10 @@ export type Database = {
           completed_dates?: string[] | null
           created_at?: string
           endpoint?: string
+          first_name?: string
           id?: string
+          language?: string
+          last_lunch_reminded_on?: string | null
           last_reminded_on?: string | null
           p256dh?: string
           secret_hash?: string
