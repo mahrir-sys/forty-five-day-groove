@@ -6,7 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { useLanguage } from '@/hooks/use-language';
 import { type AppState, dayNumber } from '@/lib/challenge';
-import { coachingChallenge, milestone, saveReflection } from '@/lib/engagement';
+import { canOpenDailyCoaching, coachingChallenge, milestone, saveReflection } from '@/lib/engagement';
 import { coachingText } from '@/lib/coaching';
 import { engagementCopy } from '@/lib/engagement-copy';
 import { celebrate } from '@/lib/check-feedback';
@@ -26,7 +26,7 @@ export function FocusList({state,today,onCheck,onExit}:{state:AppState;today:str
 export function CoachingAndMilestones({state,today}:{state:AppState;today:string}){
  const {language,challengeName}=useLanguage();const c=engagementCopy[language];const checkedOpen=useRef('');const [challengeId,setChallengeId]=useState<string|null>(null);const [milestoneDay,setMilestoneDay]=useState<number|null>(null);
  useEffect(()=>{
-  if(new Date().getHours()<5)return;
+  if(!canOpenDailyCoaching(new Date().getHours()))return;
   const key=`45days:opened:${state.startDate}:${today}`;
   if(checkedOpen.current===key)return;checkedOpen.current=key;
   try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1');}catch{}

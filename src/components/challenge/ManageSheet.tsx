@@ -162,7 +162,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
             </AlertDialogContent>
           </AlertDialog>
         </div>
-        <p className="pb-4 text-center text-xs text-muted-foreground">v{APP_BUILD.replace("T", " · ").replace(/:\d{2}\.\d{3}Z$/, " UTC")} · Made by MD</p>
+        <p className="pb-4 text-center text-xs text-muted-foreground">v{APP_BUILD.replace("T", " · ").replace("Z", " UTC")} · Made by MD</p>
       </SheetContent>
     </Sheet>
   );

@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { challengeDate, computeStats, toggleCheck, type AppState } from './challenge';
 import { dailyMotivation } from './motivation';
-import { partnerSnapshot } from './engagement';
+import { canOpenDailyCoaching, partnerSnapshot } from './engagement';
 describe('05:00 local day boundary',()=>{
+ it('does not open new daily coaching before five',()=>{
+  expect(canOpenDailyCoaching(0)).toBe(false);
+  expect(canOpenDailyCoaching(4)).toBe(false);
+  expect(canOpenDailyCoaching(5)).toBe(true);
+ });
  it('assigns midnight through 04:59 to yesterday and 05:00 to today',()=>{
   expect(challengeDate(new Date(2026,10,1,0,0))).toBe('2026-10-31');
   expect(challengeDate(new Date(2026,10,1,4,59,59))).toBe('2026-10-31');
