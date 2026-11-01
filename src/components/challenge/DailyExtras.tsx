@@ -10,6 +10,7 @@ import { coachingChallenge, milestone, saveReflection } from '@/lib/engagement';
 import { coachingText } from '@/lib/coaching';
 import { engagementCopy } from '@/lib/engagement-copy';
 import { celebrate } from '@/lib/check-feedback';
+import { personalText } from '@/lib/personalization';
 export function Reflection({state,date,update}:{state:AppState;date:string;update:(fn:(s:AppState)=>AppState)=>void}){
  const {language}=useLanguage();const c=engagementCopy[language];const [text,setText]=useState(state.reflections?.[date]??'');const [saved,setSaved]=useState(false);
  useEffect(()=>{setText(state.reflections?.[date]??'');setSaved(false);},[date,state.reflections]);
@@ -25,6 +26,7 @@ export function FocusList({state,today,onCheck,onExit}:{state:AppState;today:str
 export function CoachingAndMilestones({state,today}:{state:AppState;today:string}){
  const {language,challengeName}=useLanguage();const c=engagementCopy[language];const checkedOpen=useRef('');const [challengeId,setChallengeId]=useState<string|null>(null);const [milestoneDay,setMilestoneDay]=useState<number|null>(null);
  useEffect(()=>{
+  if(new Date().getHours()<5)return;
   const key=`45days:opened:${state.startDate}:${today}`;
   if(checkedOpen.current===key)return;checkedOpen.current=key;
   try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1');}catch{}
@@ -41,6 +43,6 @@ export function CoachingAndMilestones({state,today}:{state:AppState;today:string
  const advice=coachingText(challenge?.name??'',dayNumber(state.startDate??today,today),language);
  const dismiss=()=>{setChallengeId(null);document.getElementById('today-list')?.scrollIntoView({block:'start'});};
  const words=milestoneDay===7||milestoneDay===23||milestoneDay===40||milestoneDay===45?c.milestones[milestoneDay]:'';
- return <><Sheet open={Boolean(challenge)} onOpenChange={open=>{if(!open)dismiss();}}><SheetContent side="bottom" className="mx-auto max-w-md max-h-[90dvh] overflow-y-auto"><Target className="mb-4 size-6 text-primary"/><SheetTitle>{c.coach}</SheetTitle><SheetDescription className="mt-3">{advice.opening}</SheetDescription><h3 className="mt-5 break-words text-xl">{challenge?challengeName(challenge.name):''}</h3>{(['benefit','tip','visualize'] as const).map(key=><div key={key} className="mt-5"><h4 className="text-xs font-semibold uppercase text-primary">{c[key]}</h4><p className="mt-2 text-sm leading-relaxed">{advice[key]}</p></div>)}<Button className="mt-6 w-full" onClick={dismiss}>{c.next}</Button></SheetContent></Sheet>
+ return <><Sheet open={Boolean(challenge)} onOpenChange={open=>{if(!open)dismiss();}}><SheetContent side="bottom" className="mx-auto max-w-md max-h-[90dvh] overflow-y-auto"><Target className="mb-4 size-6 text-primary"/><SheetTitle>{c.coach}</SheetTitle><SheetDescription className="mt-3">{personalText(advice.opening,state.firstName)}</SheetDescription><h3 className="mt-5 break-words text-xl">{challenge?challengeName(challenge.name):''}</h3>{(['benefit','tip','visualize'] as const).map(key=><div key={key} className="mt-5"><h4 className="text-xs font-semibold uppercase text-primary">{c[key]}</h4><p className="mt-2 text-sm leading-relaxed">{advice[key]}</p></div>)}<Button className="mt-6 w-full" onClick={dismiss}>{c.next}</Button></SheetContent></Sheet>
  <Sheet open={milestoneDay!==null && !challenge} onOpenChange={open=>{if(!open)setMilestoneDay(null);}}><SheetContent side="bottom" className="mx-auto max-w-md"><Sparkles className="mb-5 size-8 text-primary"/><SheetTitle>{c.milestone} · {milestoneDay}/45</SheetTitle><SheetDescription className="mt-5 text-lg leading-relaxed text-foreground">{words}</SheetDescription><Button className="mt-6 w-full" onClick={()=>setMilestoneDay(null)}>{c.next}</Button></SheetContent></Sheet></>;
 }
