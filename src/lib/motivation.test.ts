@@ -4,6 +4,10 @@ import type { AppState } from "./challenge";
 
 const state: AppState = { startDate: "2026-10-01", challenges: [{ id: "a", name: "Call family" }, { id: "b", name: "Read" }], log: {} };
 describe("daily motivation", () => {
+  it('personalizes encouragement without showing a missing name',()=>{
+    expect(dailyMotivation({...state,firstName:'Mahmud'},'2026-10-01',7,'en')?.inspiration).toMatch(/^Mahmud, /);
+    expect(dailyMotivation(state,'2026-10-01',7,'en')?.inspiration).not.toContain('undefined');
+  });
   it("offers morning inspiration tied to a current challenge", () => {
     expect(dailyMotivation(state, "2026-10-01", 7, "en")).toMatchObject({ theme: "relationships", challengeId: "a", recovery: null, celebration: null });
   });
