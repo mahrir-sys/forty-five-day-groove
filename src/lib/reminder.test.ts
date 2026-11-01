@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { localDateHour, reminderSnapshot, shouldRemind, type DeviceReminderState } from "./reminder";
+import { localDateHour, reminderSnapshot, shouldRemind, shouldRemindLunch, reminderMessage, type DeviceReminderState } from "./reminder";
 
 const device = (over: Partial<DeviceReminderState> = {}): DeviceReminderState => ({
   startDate: "2026-10-10",
@@ -59,6 +59,26 @@ describe("local time", () => {
     expect(localDateHour(new Date("2026-10-21T18:00:00Z"), "Europe/Stockholm")).toEqual({ date: "2026-10-21", hour: 20 });
     expect(localDateHour(new Date("2026-12-01T19:00:00Z"), "Europe/Stockholm")).toEqual({ date: "2026-12-01", hour: 20 });
   });
+});
+
+describe('lunch reminder',()=>{
+ it('sends at noon only when no current challenge has been checked',()=>{
+  expect(shouldRemindLunch(device(),{date:today,hour:12})).toBe(true);
+  expect(shouldRemindLunch(device({checkedDates:[today]}),{date:today,hour:12})).toBe(false);
+  expect(shouldRemindLunch(device(),{date:today,hour:11})).toBe(false);
+  expect(shouldRemindLunch(device(),{date:today,hour:13})).toBe(false);
+ });
+ it('deduplicates lunch separately from evening',()=>{
+  expect(shouldRemindLunch(device({lastLunchRemindedOn:today}),{date:today,hour:12})).toBe(false);
+  expect(shouldRemind(device({lastLunchRemindedOn:today}),{date:today,hour:21})).toBe(true);
+ });
+ it('only sends during an active 45-day period',()=>{
+  expect(shouldRemindLunch(device({startDate:'2026-10-22'}),{date:today,hour:12})).toBe(false);
+  expect(shouldRemindLunch(device({startDate:'2026-09-06'}),{date:today,hour:12})).toBe(false);
+ });
+ it('syncs selected language and optional name without reflections',()=>{
+  expect(reminderSnapshot({startDate:null,firstName:'Mahmud',challenges:[],log:{},reflections:{'2026-11-01':'private'}},'fr')).toEqual({startDate:null,challengeCount:0,checkedDates:[],completedDates:[],language:'fr',firstName:'Mahmud'});
+ });
 });
 
 describe("snapshot", () => {
