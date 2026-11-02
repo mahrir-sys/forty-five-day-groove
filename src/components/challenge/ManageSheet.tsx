@@ -1,6 +1,6 @@
 import { LanguageSelect } from "./LanguageSelect";
 import { useLanguage } from "@/hooks/use-language";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { Plus, RotateCcw, Settings2, Trash2 } from "lucide-react";
@@ -51,6 +51,9 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
   const { t, language } = useLanguage();
   const copy = settingsCopy[language];
   const [text, setText] = useState("");
+  const [nameDraft, setNameDraft] = useState(state.firstName ?? "");
+  const [nameSaved, setNameSaved] = useState(false);
+  useEffect(() => { setNameDraft(state.firstName ?? ""); }, [state.firstName]);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -70,7 +73,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
         </SheetHeader>
 
         <div className="mt-5 flex items-center justify-between gap-3"><span className="text-sm text-muted-foreground">{t("language")}</span><LanguageSelect /></div>
-        <div className="mt-5"><label htmlFor="settings-name" className="text-sm text-muted-foreground">{copy.name}</label><Input id="settings-name" autoComplete="given-name" maxLength={60} value={state.firstName ?? ""} onChange={e=>onName(e.target.value)} className="mt-2" /></div>
+        <div className="mt-5"><label htmlFor="settings-name" className="text-sm text-muted-foreground">{copy.name}</label><form className="mt-2 flex gap-2" onSubmit={e=>{e.preventDefault();onName(nameDraft.trim());setNameSaved(true);}}><Input id="settings-name" autoComplete="given-name" maxLength={60} value={nameDraft} onChange={e=>{setNameDraft(e.target.value);setNameSaved(false);}} onBlur={()=>{if(nameDraft.trim()!==(state.firstName??'')){onName(nameDraft.trim());setNameSaved(true);}}} /><Button type="submit" variant="secondary">{nameSaved?copy.saved:copy.save}</Button></form></div>
         <FeedbackControls sound={sound} vibration={vibration} setSound={setSound} setVibration={setVibration} />
         <form
           className="mt-5 flex gap-2"
@@ -162,7 +165,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
             </AlertDialogContent>
           </AlertDialog>
         </div>
-        <p className="pb-4 text-center text-xs text-muted-foreground">v{APP_BUILD.replace("T", " · ").replace("Z", " UTC")} · Made by MD</p>
+        <AlertDialog><AlertDialogTrigger asChild><button type="button" className="mx-auto block pb-4 text-center text-xs text-muted-foreground underline-offset-4 hover:underline">v{APP_BUILD.slice(0, 10)} · Made by MD · {copy.whatsNew}</button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>{copy.whatsNew} · v{APP_BUILD.slice(0, 10)}</AlertDialogTitle><AlertDialogDescription asChild><ul className="list-disc space-y-1 pl-5 text-left">{copy.changes.map(item=><li key={item}>{item}</li>)}</ul></AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>OK</AlertDialogCancel></AlertDialogFooter></AlertDialogContent></AlertDialog>
       </SheetContent>
     </Sheet>
   );

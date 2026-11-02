@@ -1,5 +1,9 @@
 # Roadmap
 
+- [x] Auto-open focus mode after the day's first check until the next logical day
+- [x] Reliable name saving with Save button, greeting, kept on reset
+- [x] Version shows date only, with a "What's new" changelog
+
 - [ ] Recover the user's previously discussed pending feature list (blocked: the available chat history does not contain the discussion; needs the original conversation)
 - [x] Settings-only sound/vibration controls, 50 ms checks, triad and extended fanfare
 - [x] Automatic release version/build stamp

@@ -26,3 +26,8 @@ export function saveReflection(state: AppState, date: string, text: string): App
   if (text.trim()) reflections[date] = text.slice(0, 1000); else delete reflections[date];
   return { ...state, reflections };
 }
+/** Open in focus mode once at least one challenge is checked for today's logical day. */
+export function shouldAutoFocus(state: AppState, today: string): boolean {
+  if (!state.startDate || periodStatus(state.startDate, today) !== 'active') return false;
+  return dayProgress(state, today).done >= 1;
+}
