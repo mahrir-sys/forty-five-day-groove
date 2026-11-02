@@ -5,6 +5,9 @@ import { PartnerSheet } from "./PartnerSheet";
 import { Reflection, FocusList, CoachingAndMilestones } from "./DailyExtras";
 import { checkFeedback, celebrate } from "@/lib/check-feedback";
 import { engagementCopy } from "@/lib/engagement-copy";
+import { shouldAutoFocus } from "@/lib/engagement";
+import { settingsCopy } from "@/lib/settings-copy";
+import { useRef } from "react";
 import { DailyMotivation } from "./DailyMotivation";
 import { useLanguage } from "@/hooks/use-language";
 import { useEffect, useState, type ReactNode } from "react";
@@ -45,6 +48,8 @@ export function Dashboard({ state, today, update }: Props) {
    const [sound, setSound] = useState(true);
    const [vibration, setVibration] = useState(true);
    const [feedbackReady, setFeedbackReady] = useState(false);
+   const autoFocusDay = useRef("");
+   useEffect(() => { if (autoFocusDay.current !== today) { autoFocusDay.current = today; if (shouldAutoFocus(state, today)) setFocus(true); } }, [today]); // eslint-disable-line react-hooks/exhaustive-deps
    useEffect(() => {
      try { const saved = JSON.parse(localStorage.getItem('45days:feedback') ?? 'null'); if (saved) { setSound(saved.sound !== false); setVibration(saved.vibration !== false); } } catch {}
      setFeedbackReady(true);
@@ -87,6 +92,7 @@ export function Dashboard({ state, today, update }: Props) {
     <div className="bg-glow min-h-screen">
       <main className="mx-auto max-w-md px-5 pb-16 pt-6">
         <div className="mb-4 flex justify-end"><LanguageSelect /></div>
+        {state.firstName?.trim() && <p className="mb-2 font-display text-lg font-semibold">{settingsCopy[language].hello} {state.firstName.trim()}!</p>}
         <header className="flex items-center justify-between">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-primary">
             {TOTAL_DAYS} {t("days")}
@@ -125,7 +131,7 @@ export function Dashboard({ state, today, update }: Props) {
             }
             onReorder={(activeId, overId) => update((s) => reorderChallenge(s, activeId, overId))}
             onRestart={() => update((s) => ({ ...s, startDate: today, log: {} }))}
-            onReset={() => update(() => ({ startDate: null, challenges: [], log: {} }))}
+            onReset={() => update((s) => ({ startDate: null, challenges: [], log: {}, firstName: s.firstName }))}
           />
           </div>
         </header>
