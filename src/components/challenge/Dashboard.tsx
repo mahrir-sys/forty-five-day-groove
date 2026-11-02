@@ -131,7 +131,7 @@ export function Dashboard({ state, today, update }: Props) {
             }
             onReorder={(activeId, overId) => update((s) => reorderChallenge(s, activeId, overId))}
             onRestart={() => update((s) => ({ ...s, startDate: today, log: {} }))}
-            onReset={() => update((s) => ({ startDate: null, challenges: [], log: {}, firstName: s.firstName }))}
+            onReset={() => update((s) => ({ startDate: null, challenges: [], log: {}, firstName: s.firstName ?? "" }))}
           />
           </div>
         </header>
