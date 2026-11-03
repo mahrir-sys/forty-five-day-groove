@@ -9,15 +9,23 @@ import { type AppState, dayNumber } from '@/lib/challenge';
 import { canOpenDailyCoaching, coachingChallenge, milestone, saveReflection } from '@/lib/engagement';
 import { coachingText } from '@/lib/coaching';
 import { engagementCopy } from '@/lib/engagement-copy';
-import { celebrate } from '@/lib/check-feedback';
+import { celebrate, checkFeedback, SOUND_PROFILES, type SoundProfile } from '@/lib/check-feedback';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { personalText } from '@/lib/personalization';
 export function Reflection({state,date,update}:{state:AppState;date:string;update:(fn:(s:AppState)=>AppState)=>void}){
  const {language}=useLanguage();const c=engagementCopy[language];const [text,setText]=useState(state.reflections?.[date]??'');const [saved,setSaved]=useState(false);
  useEffect(()=>{setText(state.reflections?.[date]??'');setSaved(false);},[date,state.reflections]);
  return <section className="mt-9 border-t pt-6"><h2 className="flex items-center gap-2 text-sm font-semibold"><NotebookPen className="size-4 text-primary"/>{c.reflection}</h2><Textarea aria-label={c.reflection} placeholder={c.placeholder} maxLength={1000} className="mt-3 min-h-24 resize-y" value={text} onChange={e=>{setText(e.target.value);setSaved(false);}}/><div className="mt-2 flex items-center justify-between"><span className="text-xs text-muted-foreground">{text.length}/1000</span><Button variant="ghost" onClick={()=>{update(s=>saveReflection(s,date,text));setSaved(true);}}><Check/>{saved?c.saved:c.save}</Button></div></section>;
 }
-export function FeedbackControls({sound,vibration,setSound,setVibration}:{sound:boolean;vibration:boolean;setSound:(v:boolean)=>void;setVibration:(v:boolean)=>void}){
- const {language}=useLanguage();const c=engagementCopy[language];return <div className="mt-5 flex flex-wrap gap-5 text-xs text-muted-foreground"><label className="flex items-center gap-2"><Volume2 className="size-4"/>{c.sound}<Switch aria-label={c.sound} checked={sound} onCheckedChange={setSound}/></label><label className="flex items-center gap-2"><Vibrate className="size-4"/>{c.vibration}<Switch aria-label={c.vibration} checked={vibration} onCheckedChange={setVibration}/></label></div>;
+const profileCopy={
+ en:{label:'Sound profile',check:'Play check',final:'Play last check',names:{harmonic:'Harmonic',click:'Classic click',zen:'Zen chimes',arcade:'8-bit arcade'}},
+ sv:{label:'Ljudprofil',check:'Provlyssna bock',final:'Provlyssna sista bock',names:{harmonic:'Harmonisk',click:'Klassiskt klick',zen:'Zen/klockspel',arcade:'8-bit/arkad'}},
+ fr:{label:'Profil sonore',check:'Écouter la coche',final:'Écouter la dernière coche',names:{harmonic:'Harmonique',click:'Clic classique',zen:'Carillon zen',arcade:'Arcade 8 bits'}},
+} as const;
+export function FeedbackControls({sound,vibration,setSound,setVibration,profile,setProfile}:{sound:boolean;vibration:boolean;setSound:(v:boolean)=>void;setVibration:(v:boolean)=>void;profile:SoundProfile;setProfile:(v:SoundProfile)=>void}){
+ const {language}=useLanguage();const c=engagementCopy[language];const p=profileCopy[language];return <div className="mt-5"><div className="flex flex-wrap gap-5 text-xs text-muted-foreground"><label className="flex items-center gap-2"><Volume2 className="size-4"/>{c.sound}<Switch aria-label={c.sound} checked={sound} onCheckedChange={setSound}/></label><label className="flex items-center gap-2"><Vibrate className="size-4"/>{c.vibration}<Switch aria-label={c.vibration} checked={vibration} onCheckedChange={setVibration}/></label></div>
+ <div className="mt-4"><span className="text-xs text-muted-foreground">{p.label}</span><Select value={profile} onValueChange={v=>setProfile(v as SoundProfile)}><SelectTrigger aria-label={p.label} className="mt-2"><SelectValue/></SelectTrigger><SelectContent>{SOUND_PROFILES.map(id=><SelectItem key={id} value={id}>{p.names[id]}</SelectItem>)}</SelectContent></Select>
+ <div className="mt-2 flex flex-wrap gap-2"><Button type="button" size="sm" variant="outline" onClick={()=>checkFeedback(true,false,false,profile)}><Volume2/>{p.check}</Button><Button type="button" size="sm" variant="outline" onClick={()=>checkFeedback(true,false,true,profile)}><Sparkles/>{p.final}</Button></div></div></div>;
 }
 export function FocusList({state,today,onCheck,onExit}:{state:AppState;today:string;onCheck:(id:string)=>void;onExit:()=>void}){
  const {language,challengeName}=useLanguage();const c=engagementCopy[language];const remaining=state.challenges.filter(item=>!(state.log[today]??[]).includes(item.id));

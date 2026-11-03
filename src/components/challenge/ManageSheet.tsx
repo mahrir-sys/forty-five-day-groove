@@ -1,3 +1,4 @@
+import type { SoundProfile } from "@/lib/check-feedback";
 import { LanguageSelect } from "./LanguageSelect";
 import { useLanguage } from "@/hooks/use-language";
 import { useEffect, useState } from "react";
@@ -37,6 +38,7 @@ import type { Backup } from '@/lib/backup';
 type Props = {
   state: AppState; today: string; sound: boolean; vibration: boolean;
   setSound: (value:boolean)=>void; setVibration: (value:boolean)=>void;
+  soundProfile: SoundProfile; setSoundProfile: (value:SoundProfile)=>void;
   onName: (name:string)=>void; onRestore: (backup:Backup)=>void;
   challenges: Challenge[];
   onAdd: (name: string) => void;
@@ -47,7 +49,7 @@ type Props = {
   onReset: () => void;
 };
 
-export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, onRestart, onReset, state, today, sound, vibration, setSound, setVibration, onName, onRestore }: Props) {
+export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, onRestart, onReset, state, today, sound, vibration, setSound, setVibration, soundProfile, setSoundProfile, onName, onRestore }: Props) {
   const { t, language } = useLanguage();
   const copy = settingsCopy[language];
   const [text, setText] = useState("");
@@ -74,7 +76,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
 
         <div className="mt-5 flex items-center justify-between gap-3"><span className="text-sm text-muted-foreground">{t("language")}</span><LanguageSelect /></div>
         <div className="mt-5"><label htmlFor="settings-name" className="text-sm text-muted-foreground">{copy.name}</label><form className="mt-2 flex gap-2" onSubmit={e=>{e.preventDefault();onName(nameDraft.trim());setNameSaved(true);}}><Input id="settings-name" autoComplete="given-name" maxLength={60} value={nameDraft} onChange={e=>{setNameDraft(e.target.value);setNameSaved(false);}} onBlur={()=>{if(nameDraft.trim()!==(state.firstName??'')){onName(nameDraft.trim());setNameSaved(true);}}} /><Button type="submit" variant="secondary">{nameSaved?copy.saved:copy.save}</Button></form></div>
-        <FeedbackControls sound={sound} vibration={vibration} setSound={setSound} setVibration={setVibration} />
+        <FeedbackControls sound={sound} vibration={vibration} setSound={setSound} setVibration={setVibration} profile={soundProfile} setProfile={setSoundProfile} />
         <form
           className="mt-5 flex gap-2"
           onSubmit={(e) => {
@@ -115,7 +117,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
         </SortableContext>
         </DndContext>
 
-        <BackupControls state={state} today={today} sound={sound} vibration={vibration} onRestore={onRestore} />
+        <BackupControls state={state} today={today} sound={sound} vibration={vibration} soundProfile={soundProfile} onRestore={onRestore} />
         <div className="mt-8 space-y-2 border-t pt-6 pb-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>

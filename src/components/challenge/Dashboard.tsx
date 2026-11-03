@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Target } from "lucide-react";
 import { PartnerSheet } from "./PartnerSheet";
 import { Reflection, FocusList, CoachingAndMilestones } from "./DailyExtras";
-import { checkFeedback, celebrate } from "@/lib/check-feedback";
+import { checkFeedback, celebrate, isSoundProfile, type SoundProfile } from "@/lib/check-feedback";
 import { engagementCopy } from "@/lib/engagement-copy";
 import { shouldAutoFocus } from "@/lib/engagement";
 import { settingsCopy } from "@/lib/settings-copy";
@@ -47,14 +47,15 @@ export function Dashboard({ state, today, update }: Props) {
    const [focus, setFocus] = useState(false);
    const [sound, setSound] = useState(true);
    const [vibration, setVibration] = useState(true);
+   const [soundProfile, setSoundProfile] = useState<SoundProfile>("harmonic");
    const [feedbackReady, setFeedbackReady] = useState(false);
    const autoFocusDay = useRef("");
    useEffect(() => { if (autoFocusDay.current !== today) { autoFocusDay.current = today; if (shouldAutoFocus(state, today)) setFocus(true); } }, [today]); // eslint-disable-line react-hooks/exhaustive-deps
    useEffect(() => {
-     try { const saved = JSON.parse(localStorage.getItem('45days:feedback') ?? 'null'); if (saved) { setSound(saved.sound !== false); setVibration(saved.vibration !== false); } } catch {}
+     try { const saved = JSON.parse(localStorage.getItem('45days:feedback') ?? 'null'); if (saved) { setSound(saved.sound !== false); setVibration(saved.vibration !== false); if (isSoundProfile(saved.soundProfile)) setSoundProfile(saved.soundProfile); } } catch {}
      setFeedbackReady(true);
    }, []);
-   useEffect(() => { if (feedbackReady) { try { localStorage.setItem('45days:feedback', JSON.stringify({sound, vibration})); } catch {} } }, [sound, vibration, feedbackReady]);
+   useEffect(() => { if (feedbackReady) { try { localStorage.setItem('45days:feedback', JSON.stringify({sound, vibration, soundProfile})); } catch {} } }, [sound, vibration, soundProfile, feedbackReady]);
   const reminders = useReminders(state);
   const install = useInstallApp();
   const start = state.startDate ?? today;
@@ -80,7 +81,7 @@ export function Dashboard({ state, today, update }: Props) {
     const progress = dayProgress(state, date);
     const final = isNew && progress.total > 0 && progress.done + 1 === progress.total;
     update(s => toggleCheck(s, date, id));
-    if (isNew) checkFeedback(sound, vibration, final);
+    if (isNew) checkFeedback(sound, vibration, final, soundProfile);
     if (final && date === today) void celebrate();
   };
   if (focus) return <><FocusList state={state} today={today} onCheck={id => check(id, today)} onExit={() => setFocus(false)} /><div hidden><PartnerSheet state={state} today={today} /></div><CoachingAndMilestones state={state} today={today} /></>;
@@ -110,9 +111,9 @@ export function Dashboard({ state, today, update }: Props) {
           <ReminderSheet reminders={reminders} install={install} />
           <ManageSheet
             state={state} today={today} sound={sound} vibration={vibration}
-            setSound={setSound} setVibration={setVibration}
+            setSound={setSound} setVibration={setVibration} soundProfile={soundProfile} setSoundProfile={setSoundProfile}
             onName={firstName=>update(s=>({...s,firstName}))}
-            onRestore={backup=>{update(()=>backup.state);setLanguage(backup.preferences.language);setSound(backup.preferences.sound);setVibration(backup.preferences.vibration);}}
+            onRestore={backup=>{update(()=>backup.state);setLanguage(backup.preferences.language);setSound(backup.preferences.sound);setVibration(backup.preferences.vibration);setSoundProfile(backup.preferences.soundProfile);}}
             challenges={state.challenges}
             onAdd={(name) =>
               update((s) => ({
