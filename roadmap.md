@@ -33,3 +33,7 @@
 - [x] Evening reminder around 21 when at least one challenge remains, even when the app is closed (Lovable Cloud + web push)
 - [x] Clear guide to turning on notifications, and a status showing whether evening reminders are allowed on Android
 - [ ] Publish so reminders and install work on the phone (waits on the user publishing)
+
+- [x] Automatic version check that reloads installed apps on new releases
+- [x] Selectable sound profiles with preview, saved in backups
+- [x] 45 unique daily quotes, no challenge label

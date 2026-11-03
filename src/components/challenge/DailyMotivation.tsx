@@ -5,7 +5,7 @@ import type { AppState } from "@/lib/challenge";
 import { dailyMotivation, motivationLabels } from "@/lib/motivation";
 
 export function DailyMotivation({ state, today }: { state: AppState; today: string }) {
-  const { language, challengeName } = useLanguage();
+  const { language } = useLanguage();
   const [hour, setHour] = useState(0);
   useEffect(() => {
     const refresh = () => setHour(new Date().getHours());
@@ -17,7 +17,6 @@ export function DailyMotivation({ state, today }: { state: AppState; today: stri
   const message = dailyMotivation(state, today, hour, language);
   if (!message) return null;
   const labels = motivationLabels[language];
-  const challenge = state.challenges.find((item) => item.id === message.challengeId);
   return (
     <section aria-label={labels.morning} className="mt-7 border-y border-border py-5">
       <div className="flex items-center gap-2 text-primary">
@@ -25,7 +24,7 @@ export function DailyMotivation({ state, today }: { state: AppState; today: stri
         <h2 className="text-xs font-semibold uppercase tracking-wider">{labels.morning}</h2>
       </div>
       <p className="mt-3 font-display text-lg font-medium leading-relaxed">{message.inspiration}</p>
-      {challenge && <p className="mt-2 break-words text-xs text-muted-foreground">{labels.focus} · {challengeName(challenge.name)}</p>}
+      {message.author && <p className="mt-2 text-xs text-muted-foreground">— {message.author}</p>}
       {message.recovery && (
         <div className="mt-4 flex items-start gap-2 border-l-2 border-primary pl-3">
           <Heart aria-hidden="true" className="mt-1 size-4 shrink-0 text-primary" />

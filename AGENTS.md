@@ -28,3 +28,4 @@
 - `challengeDate` is the shared local logical-day boundary used by the store and all progress consumers; calendar dates and real timestamps remain unchanged.
 - JSON backups use a versioned, size-bounded, validated allowlist in `src/lib/backup.ts`; restore requires confirmation and excludes push-device secrets and partner capabilities.
 - Release stamps are injected by Vite at build time, so the displayed stamp belongs to the bundle being viewed without introducing caching workers or update polling.
+- Installed apps poll `/api/public/version` (no-store) via `checkForUpdate` in `src/lib/version.ts` and reload once per new version, with a session guard against reload loops.
