@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/hooks/use-language";
+import { checkForUpdate } from "@/lib/version";
 
 function NotFoundComponent() {
   return (
@@ -126,6 +127,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  useEffect(() => {
+    const run = () => { void checkForUpdate(); };
+    const onVisible = () => { if (document.visibilityState === "visible") run(); };
+    run();
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", run);
+    const unsubscribe = router.subscribe("onResolved", run);
+    const timer = window.setInterval(run, 120_000);
+    return () => { document.removeEventListener("visibilitychange", onVisible); window.removeEventListener("focus", run); unsubscribe(); window.clearInterval(timer); };
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>
