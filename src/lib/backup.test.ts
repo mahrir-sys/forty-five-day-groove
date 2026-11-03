@@ -3,7 +3,7 @@ import { makeBackup, parseBackup } from './backup';
 const state={startDate:'2026-11-01',firstName:'Mahmud',challenges:[{id:'a',name:'Read'}],log:{'2026-11-01':['a'],'2026-10-30':['removed']},reflections:{'2026-11-01':'A good day'}};
 describe('local backup',()=>{
  it('restores challenges, identity, history, reflections, name and preferences',()=>{
-  expect(parseBackup(JSON.stringify(makeBackup(state,'fr',false,true)))).toEqual({app:'45 days',version:1,state,preferences:{language:'fr',sound:false,vibration:true}});
+  expect(parseBackup(JSON.stringify(makeBackup(state,'fr',false,true,'zen')))).toEqual({app:'45 days',version:1,state,preferences:{language:'fr',sound:false,vibration:true,soundProfile:'zen'}});
  });
  it('rejects malformed data and invalid calendar dates',()=>{
   expect(()=>parseBackup('{}')).toThrow();
