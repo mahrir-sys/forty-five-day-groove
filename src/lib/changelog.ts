@@ -7,9 +7,9 @@ export const RELEASES: Release[] = [
   {
     date: "2026-11-04",
     changes: {
-      en: ["Reflection appears in focus mode after the last check, with a skip button", "Full version history is kept here", "More reliable automatic update while the app is open"],
-      sv: ["Reflektion visas i fokusläget efter sista avbockningen, med knapp för att hoppa över", "Hela versionshistoriken sparas här", "Säkrare automatisk uppdatering medan appen är öppen"],
-      fr: ["La réflexion apparaît en mode concentration après le dernier défi, avec un bouton pour passer", "L’historique complet des versions est conservé ici", "Mise à jour automatique plus fiable quand l’application est ouverte"],
+      en: ["Test of the automatic app update", "Reflection appears in focus mode after the last check, with a skip button", "Full version history is kept here", "More reliable automatic update while the app is open"],
+      sv: ["Test av automatisk uppdatering av appen", "Reflektion visas i fokusläget efter sista avbockningen, med knapp för att hoppa över", "Hela versionshistoriken sparas här", "Säkrare automatisk uppdatering medan appen är öppen"],
+      fr: ["Test de la mise à jour automatique de l’application", "La réflexion apparaît en mode concentration après le dernier défi, avec un bouton pour passer", "L’historique complet des versions est conservé ici", "Mise à jour automatique plus fiable quand l’application est ouverte"],
     },
   },
   {
