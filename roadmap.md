@@ -37,3 +37,7 @@
 - [x] Automatic version check that reloads installed apps on new releases
 - [x] Selectable sound profiles with preview, saved in backups
 - [x] 45 unique daily quotes, no challenge label
+
+- [x] Reflection in focus mode after the last check, with a skip button
+- [x] Keep the full version history in the changelog
+- [x] Version check skips reload while typing; live update needs publishing

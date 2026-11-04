@@ -1,3 +1,4 @@
+import { RELEASES } from "@/lib/changelog";
 import type { SoundProfile } from "@/lib/check-feedback";
 import { LanguageSelect } from "./LanguageSelect";
 import { useLanguage } from "@/hooks/use-language";
@@ -167,7 +168,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
             </AlertDialogContent>
           </AlertDialog>
         </div>
-        <AlertDialog><AlertDialogTrigger asChild><button type="button" className="mx-auto block pb-4 text-center text-xs text-muted-foreground underline-offset-4 hover:underline">v{APP_BUILD.slice(0, 10)} · Made by MD · {copy.whatsNew}</button></AlertDialogTrigger><AlertDialogContent><AlertDialogHeader><AlertDialogTitle>{copy.whatsNew} · v{APP_BUILD.slice(0, 10)}</AlertDialogTitle><AlertDialogDescription asChild><ul className="list-disc space-y-1 pl-5 text-left">{copy.changes.map(item=><li key={item}>{item}</li>)}</ul></AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>OK</AlertDialogCancel></AlertDialogFooter></AlertDialogContent></AlertDialog>
+        <AlertDialog><AlertDialogTrigger asChild><button type="button" className="mx-auto block pb-4 text-center text-xs text-muted-foreground underline-offset-4 hover:underline">v{APP_BUILD.slice(0, 10)} · Made by MD · {copy.whatsNew}</button></AlertDialogTrigger><AlertDialogContent className="max-h-[85dvh] overflow-y-auto"><AlertDialogHeader><AlertDialogTitle>{copy.whatsNew}</AlertDialogTitle><AlertDialogDescription asChild><div className="space-y-5 text-left">{RELEASES.map((r,i)=><section key={r.date}><h3 className="text-sm font-semibold text-foreground">v{r.date}{i===0?' ·  ✦':''}</h3><ul className="mt-1 list-disc space-y-1 pl-5">{r.changes[language].map(item=><li key={item}>{item}</li>)}</ul></section>)}</div></AlertDialogDescription></AlertDialogHeader><AlertDialogFooter><AlertDialogCancel>OK</AlertDialogCancel></AlertDialogFooter></AlertDialogContent></AlertDialog>
       </SheetContent>
     </Sheet>
   );

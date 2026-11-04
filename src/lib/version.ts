@@ -11,9 +11,15 @@ export function needsUpdate(current: string, remote: unknown): remote is string 
 const RELOAD_KEY = "45days:update-reload";
 let checking = false;
 
+/** True while the user is typing, so a reload never discards unsaved text. */
+function isBusy() {
+  const el = document.activeElement as HTMLElement | null;
+  return !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable);
+}
+
 /** Fetches the deployed version and reloads once if it differs. Network failures are ignored (offline-safe). */
 export async function checkForUpdate() {
-  if (checking || import.meta.env.DEV || typeof window === "undefined" || !navigator.onLine) return;
+  if (checking || import.meta.env.DEV || typeof window === "undefined" || !navigator.onLine || isBusy()) return;
   checking = true;
   try {
     const res = await fetch(`/api/public/version?t=${Date.now()}`, { cache: "no-store" });
