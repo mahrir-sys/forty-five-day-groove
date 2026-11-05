@@ -50,7 +50,14 @@ export function Dashboard({ state, today, update }: Props) {
    const [soundProfile, setSoundProfile] = useState<SoundProfile>("harmonic");
    const [feedbackReady, setFeedbackReady] = useState(false);
    const autoFocusDay = useRef("");
-   useEffect(() => { if (autoFocusDay.current !== today) { autoFocusDay.current = today; if (shouldAutoFocus(state, today)) setFocus(true); } }, [today]); // eslint-disable-line react-hooks/exhaustive-deps
+   // Auto-focus once per app session and logical day, so returning from other pages lands on home.
+   useEffect(() => {
+     if (autoFocusDay.current === today) return;
+     autoFocusDay.current = today;
+     let seen = false;
+     try { seen = sessionStorage.getItem('45days:autofocus') === today; sessionStorage.setItem('45days:autofocus', today); } catch {}
+     if (!seen && shouldAutoFocus(state, today)) setFocus(true);
+   }, [today]); // eslint-disable-line react-hooks/exhaustive-deps
    useEffect(() => {
      try { const saved = JSON.parse(localStorage.getItem('45days:feedback') ?? 'null'); if (saved) { setSound(saved.sound !== false); setVibration(saved.vibration !== false); if (isSoundProfile(saved.soundProfile)) setSoundProfile(saved.soundProfile); } } catch {}
      setFeedbackReady(true);
