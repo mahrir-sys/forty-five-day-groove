@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PeppRouteImport } from './routes/pepp'
 import { Route as StatistikRouteImport } from './routes/statistik'
 import { Route as PartnerTokenRouteImport } from './routes/partner.$token'
 import { Route as ApiPublicVersionRouteImport } from './routes/api/public/version'
@@ -18,6 +19,11 @@ import { Route as ApiPublicJobsEveningRemindersRouteImport } from './routes/api/
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PeppRoute = PeppRouteImport.update({
+  id: '/pepp',
+  path: '/pepp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StatistikRoute = StatistikRouteImport.update({
@@ -44,6 +50,7 @@ const ApiPublicJobsEveningRemindersRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pepp': typeof PeppRoute
   '/statistik': typeof StatistikRoute
   '/partner/$token': typeof PartnerTokenRoute
   '/api/public/version': typeof ApiPublicVersionRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pepp': typeof PeppRoute
   '/statistik': typeof StatistikRoute
   '/partner/$token': typeof PartnerTokenRoute
   '/api/public/version': typeof ApiPublicVersionRoute
@@ -59,6 +67,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pepp': typeof PeppRoute
   '/statistik': typeof StatistikRoute
   '/partner/$token': typeof PartnerTokenRoute
   '/api/public/version': typeof ApiPublicVersionRoute
@@ -68,6 +77,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/pepp'
     | '/statistik'
     | '/partner/$token'
     | '/api/public/version'
@@ -75,6 +85,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/pepp'
     | '/statistik'
     | '/partner/$token'
     | '/api/public/version'
@@ -82,6 +93,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/pepp'
     | '/statistik'
     | '/partner/$token'
     | '/api/public/version'
@@ -90,6 +102,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PeppRoute: typeof PeppRoute
   StatistikRoute: typeof StatistikRoute
   PartnerTokenRoute: typeof PartnerTokenRoute
   ApiPublicVersionRoute: typeof ApiPublicVersionRoute
@@ -103,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pepp': {
+      id: '/pepp'
+      path: '/pepp'
+      fullPath: '/pepp'
+      preLoaderRoute: typeof PeppRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/statistik': {
@@ -138,6 +158,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PeppRoute: PeppRoute,
   StatistikRoute: StatistikRoute,
   PartnerTokenRoute: PartnerTokenRoute,
   ApiPublicVersionRoute: ApiPublicVersionRoute,

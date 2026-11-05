@@ -1,6 +1,6 @@
 import { LanguageSelect } from "./LanguageSelect";
 import { Button } from "@/components/ui/button";
-import { Target } from "lucide-react";
+import { Sparkles, Target } from "lucide-react";
 import { PartnerSheet } from "./PartnerSheet";
 import { Reflection, FocusList, CoachingAndMilestones } from "./DailyExtras";
 import { checkFeedback, celebrate, isSoundProfile, type SoundProfile } from "@/lib/check-feedback";
@@ -101,6 +101,7 @@ export function Dashboard({ state, today, update }: Props) {
           <div className="flex items-center gap-1">
           {status === 'active' && <Button variant="ghost" size="icon" aria-label={c.focus} title={c.focus} onClick={() => setFocus(true)}><Target /></Button>}
           <PartnerSheet state={state} today={today} />
+          <Link to="/pepp" aria-label="Pepp" className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"><Sparkles className="size-5" /></Link>
           <Link
             to="/statistik"
             aria-label={t("Statistik")}

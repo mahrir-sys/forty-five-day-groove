@@ -13,6 +13,7 @@ export function createResponsesCall(
   config: { baseURL: string; apiKey: string; model: string },
   messages: ModelMessage[],
   instructions?: string,
+  schema: z.ZodType = z.object({ translations: z.array(z.object({ source: z.string(), en: z.string(), sv: z.string(), fr: z.string() })) }),
 ) {
   const runIdFetch = createLovableAiGatewayRunIdFetch(getLovableAiGatewayRunId(request));
   const provider = createOpenAI({
@@ -26,7 +27,7 @@ export function createResponsesCall(
     model: provider.responses(config.model),
     ...(instructions ? { instructions } : {}),
     messages,
-    output: Output.object({ schema: z.object({ translations: z.array(z.object({ source: z.string(), en: z.string(), sv: z.string(), fr: z.string() })) }) }),
+    output: Output.object({ schema }),
     maxRetries: 0,
     abortSignal: request.signal,
     providerOptions: {

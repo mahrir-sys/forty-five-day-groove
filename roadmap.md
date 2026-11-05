@@ -41,3 +41,7 @@
 - [x] Reflection in focus mode after the last check, with a skip button
 - [x] Keep the full version history in the changelog
 - [x] Version check skips reload while typing; live update needs publishing
+
+- [x] AI pep talk page (/pepp) with daily cached analysis and refresh button
+- [ ] Settings split into Challenges and Settings tabs (next)
+- [ ] No auto-focus when all done; returning from statistics lands on home (next)
