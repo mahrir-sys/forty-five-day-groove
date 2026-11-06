@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { TOTAL_DAYS, type Challenge } from "@/lib/challenge";
 import { ChallengeRow } from "./ChallengeRow";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { FeedbackControls } from './DailyExtras';
 import { BackupControls } from './BackupControls';
@@ -71,14 +72,21 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
       <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-3xl border-t bg-card">
         <SheetHeader className="text-left">
           <SheetTitle className="font-display text-2xl">{copy.settings}</SheetTitle>
-          <SheetDescription>{t("Lägg till eller ta bort. Ändringar gäller alla dagar.")}</SheetDescription>
+          <SheetDescription className="sr-only">{t("Lägg till eller ta bort. Ändringar gäller alla dagar.")}</SheetDescription>
         </SheetHeader>
 
+        <Tabs defaultValue="challenges" className="mt-4">
+        <TabsList className="grid w-full grid-cols-2"><TabsTrigger value="challenges">{copy.challengesTab}</TabsTrigger><TabsTrigger value="settings">{copy.settings}</TabsTrigger></TabsList>
+        <TabsContent value="settings">
         <div className="mt-5 flex items-center justify-between gap-3"><span className="text-sm text-muted-foreground">{t("language")}</span><LanguageSelect /></div>
         <div className="mt-5"><label htmlFor="settings-name" className="text-sm text-muted-foreground">{copy.name}</label><form className="mt-2 flex gap-2" onSubmit={e=>{e.preventDefault();onName(nameDraft.trim());setNameSaved(true);}}><Input id="settings-name" autoComplete="given-name" maxLength={60} value={nameDraft} onChange={e=>{setNameDraft(e.target.value);setNameSaved(false);}} onBlur={()=>{if(nameDraft.trim()!==(state.firstName??'')){onName(nameDraft.trim());setNameSaved(true);}}} /><Button type="submit" variant="secondary">{nameSaved?copy.saved:copy.save}</Button></form></div>
         <FeedbackControls sound={sound} vibration={vibration} setSound={setSound} setVibration={setVibration} profile={soundProfile} setProfile={setSoundProfile} />
+        <BackupControls state={state} today={today} sound={sound} vibration={vibration} soundProfile={soundProfile} onRestore={onRestore} />
+        </TabsContent>
+        <TabsContent value="challenges">
+        <p className="mt-4 text-sm text-muted-foreground">{t("Lägg till eller ta bort. Ändringar gäller alla dagar.")}</p>
         <form
-          className="mt-5 flex gap-2"
+          className="mt-3 flex gap-2"
           onSubmit={(e) => {
             e.preventDefault();
             if (!text.trim()) return;
@@ -117,7 +125,8 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
         </SortableContext>
         </DndContext>
 
-        <BackupControls state={state} today={today} sound={sound} vibration={vibration} soundProfile={soundProfile} onRestore={onRestore} />
+        </TabsContent>
+        </Tabs>
         <div className="mt-8 space-y-2 border-t pt-6 pb-4">
           <AlertDialog>
             <AlertDialogTrigger asChild>

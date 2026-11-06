@@ -6,6 +6,15 @@ export type Release = { version: string; date: string; changes: Record<Language,
 
 export const RELEASES: Release[] = [
   {
+    version: "1.6.0",
+    date: "2026-11-06",
+    changes: {
+      en: ["Settings split into two tabs: Challenges and Settings", "Focus mode no longer opens when all challenges are done", "Going back from statistics or pep talk lands on the home screen"],
+      sv: ["Inställningar uppdelade i två flikar: Utmaningar och Inställningar", "Fokusläget öppnas inte när alla utmaningar är klara", "Tillbaka från statistik eller pepp leder till hemskärmen"],
+      fr: ["Paramètres répartis en deux onglets : Défis et Paramètres", "Le mode concentration ne s’ouvre plus quand tous les défis sont faits", "Revenir des statistiques ou des encouragements ramène à l’accueil"],
+    },
+  },
+  {
     version: "1.5.0",
     date: "2026-11-05",
     changes: {

@@ -43,5 +43,5 @@
 - [x] Version check skips reload while typing; live update needs publishing
 
 - [x] AI pep talk page (/pepp) with daily cached analysis and refresh button
-- [ ] Settings split into Challenges and Settings tabs (next)
-- [ ] No auto-focus when all done; returning from statistics lands on home (next)
+- [x] Settings split into Challenges and Settings tabs (next)
+- [x] No auto-focus when all done; returning from statistics lands on home (next)
