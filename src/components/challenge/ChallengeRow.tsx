@@ -58,7 +58,7 @@ export function ChallengeRow({ challenge: c, position, onRename, onRemove }: Pro
 
   return (
     <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} className={cn("relative flex items-center gap-1 rounded-xl border bg-background py-2 pl-2 pr-3", isDragging && "z-10 border-primary shadow-lg")}>
-      <Button ref={setActivatorNodeRef} variant="ghost" size="icon" type="button" {...attributes} {...listeners} className="shrink-0 touch-none cursor-grab text-muted-foreground active:cursor-grabbing" aria-label={t("reorder", { name: challengeName(c.name) })} title={t("reorder", { name: challengeName(c.name) })}>
+      <Button data-no-swipe ref={setActivatorNodeRef} variant="ghost" size="icon" type="button" {...attributes} {...listeners} className="shrink-0 touch-none cursor-grab text-muted-foreground active:cursor-grabbing" aria-label={t("reorder", { name: challengeName(c.name) })} title={t("reorder", { name: challengeName(c.name) })}>
         <GripVertical className="size-5" />
       </Button>
       <span className="w-6 shrink-0 text-center font-display font-extrabold tabular-nums text-primary">{position}</span>

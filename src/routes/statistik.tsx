@@ -1,7 +1,7 @@
-import { LanguageSelect } from "@/components/challenge/LanguageSelect";
+import { RoutePanel } from "@/components/challenge/RoutePanel";
 import { useLanguage } from "@/hooks/use-language";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Flame, Trophy } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { Flame, Trophy } from "lucide-react";
 import { useChallengeStore } from "@/hooks/use-challenge-store";
 import { computeChallengeStats, computeStats, TOTAL_DAYS } from "@/lib/challenge";
 
@@ -22,25 +22,13 @@ export const Route = createFileRoute("/statistik")({
 function StatsPage() {
   const { t, challengeName } = useLanguage();
   const { state, ready, today } = useChallengeStore();
-  if (!ready) return <div className="min-h-screen bg-background" />;
+  if (!ready) return <RoutePanel title={t("Statistik")}>{null}</RoutePanel>;
 
   const overall = computeStats(state, today);
   const items = computeChallengeStats(state, today);
 
   return (
-    <div className="bg-glow min-h-screen">
-      <main className="mx-auto max-w-md px-5 pb-16 pt-6">
-        <div className="mb-4 flex justify-end"><LanguageSelect /></div>
-        <header className="flex items-center gap-2">
-          <Link
-            to="/"
-            aria-label={t("Tillbaka")}
-            className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-          >
-            <ArrowLeft className="size-5" />
-          </Link>
-          <h1 className="text-2xl font-extrabold tracking-tight">{t("Statistik")}</h1>
-        </header>
+    <RoutePanel title={t("Statistik")}>
 
         {!state.startDate ? (
           <p className="mt-6 rounded-2xl border border-dashed p-6 text-center text-muted-foreground">
@@ -96,8 +84,7 @@ function StatsPage() {
             </section>
           </>
         )}
-      </main>
-    </div>
+    </RoutePanel>
   );
 }
 

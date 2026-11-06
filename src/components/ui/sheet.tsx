@@ -57,18 +57,43 @@ interface SheetContentProps
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, ...props }, ref) => (
+>(({ side = "right", className, children, style, ...props }, ref) => {
+  // Bottom sheets can be swiped down to close (only when scrolled to the top).
+  const closeRef = React.useRef<HTMLButtonElement>(null);
+  const drag = React.useRef<{ y: number; active: boolean } | null>(null);
+  const [dy, setDy] = React.useState(0);
+  const swipe = side === "bottom" ? {
+    onTouchStart: (e: React.TouchEvent<HTMLDivElement>) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-no-swipe]")) return;
+      drag.current = { y: (e.touches[0]?.clientY ?? 0), active: e.currentTarget.scrollTop <= 0 };
+    },
+    onTouchMove: (e: React.TouchEvent<HTMLDivElement>) => {
+      if (!drag.current?.active) return;
+      const d = (e.touches[0]?.clientY ?? 0) - drag.current.y;
+      if (d > 0) setDy(d); else if (dy) setDy(0);
+      if (d < 0) drag.current.active = false;
+    },
+    onTouchEnd: () => {
+      if (dy > 100) closeRef.current?.click();
+      drag.current = null; setDy(0);
+    },
+  } : {};
+  return (
   <SheetPortal>
     <SheetOverlay />
-    <SheetPrimitive.Content ref={ref} className={cn(sheetVariants({ side }), className)} {...props}>
-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background cursor-pointer transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+    <SheetPrimitive.Content ref={ref} className={cn(sheetVariants({ side }), className)}
+      style={dy ? { ...style, transform: `translateY(${dy}px)`, transition: "none" } : style} {...swipe} {...props}>
+      {side === "bottom" && <div aria-hidden className="mx-auto -mt-3 mb-3 h-1.5 w-12 rounded-full bg-muted-foreground/30" />}
+      <SheetPrimitive.Close ref={closeRef} className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background cursor-pointer transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>
       {children}
     </SheetPrimitive.Content>
   </SheetPortal>
-));
+  );
+});
 SheetContent.displayName = SheetPrimitive.Content.displayName;
 
 const SheetHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
