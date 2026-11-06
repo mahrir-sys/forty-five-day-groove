@@ -1,10 +1,21 @@
 import type { Language } from "./i18n";
 
 /** Full release history, newest first. Add new releases at the top; never remove old ones. */
-export type Release = { date: string; changes: Record<Language, string[]> };
+/** Semantic version (Major.Minor.Patch): bump patch for fixes or extra releases the same day, minor for new features. */
+export type Release = { version: string; date: string; changes: Record<Language, string[]> };
 
 export const RELEASES: Release[] = [
   {
+    version: "1.5.0",
+    date: "2026-11-05",
+    changes: {
+      en: ["Version number with date, so several updates on the same day are easy to tell apart"],
+      sv: ["Versionsnummer med datum, så att flera uppdateringar samma dag går att skilja åt"],
+      fr: ["Numéro de version avec date, pour distinguer plusieurs mises à jour le même jour"],
+    },
+  },
+  {
+    version: "1.4.0",
     date: "2026-11-04",
     changes: {
       en: ["Test of the automatic app update", "Reflection appears in focus mode after the last check, with a skip button", "Full version history is kept here", "More reliable automatic update while the app is open"],
@@ -13,6 +24,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
+    version: "1.3.0",
     date: "2026-11-03",
     changes: {
       en: ["Automatic update of the installed app", "Four sound profiles with preview", "45 unique daily quotes"],
@@ -21,6 +33,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
+    version: "1.2.0",
     date: "2026-10-24",
     changes: {
       en: ["Sound and vibration settings, clearer 50 ms vibration", "New check-off chord and a festive fanfare for the last check", "Day rollover at 05:00", "Lunch reminder at 12 and evening reminder at 21, in your language", "Optional first name for personal encouragement", "Backup export and restore", "Focus mode opens automatically after your first check of the day"],
@@ -29,6 +42,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
+    version: "1.1.0",
     date: "2026-10-23",
     changes: {
       en: ["Daily reflection, partner link and focus mode", "Sound and vibration on check-off", "Milestones with confetti on days 7, 23, 40 and 45", "Varied recovery texts and coaching after repeated misses", "Morning inspiration and evening encouragement"],
@@ -37,6 +51,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
+    version: "1.0.0",
     date: "2026-10-20",
     changes: {
       en: ["Drag-and-drop ordering with numbering", "Version number with Made by MD", "Reminder at 21 when a challenge remains", "App renamed to 45 days", "English, Swedish and French with translated challenge names", "Statistics page", "Installable app with reminders"],
@@ -45,3 +60,6 @@ export const RELEASES: Release[] = [
     },
   },
 ];
+
+/** Display label for the newest release, e.g. "v1.5.0 · 2026-11-05". */
+export const formatRelease = (r: Release) => `v${r.version} · ${r.date}`;
