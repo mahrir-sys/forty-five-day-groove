@@ -25,6 +25,8 @@ import {
   reorderChallenge,
   periodStatus,
   toggleCheck,
+  toggleNotApplicable,
+  isNotApplicable,
   TOTAL_DAYS,
   type AppState,
 } from "@/lib/challenge";
@@ -233,11 +235,13 @@ export function Dashboard({ state, today, update }: Props) {
             <ul className="mt-4 space-y-2">
               {state.challenges.map((c, i) => {
                 const isDone = checked.has(c.id);
+                const isNa = isNotApplicable(state, selected, c.id);
+                const naLabel = { en: "Not applicable", sv: "Ej tillämplig", fr: "Non applicable" }[language];
                 return (
-                  <li key={c.id}>
+                  <li key={c.id} className="flex items-stretch gap-2">
                     <button
                       type="button"
-                      disabled={!canCheck}
+                      disabled={!canCheck || isNa}
                       onClick={() => check(c.id, selected)}
                       aria-pressed={isDone}
                       className={cn(
@@ -253,10 +257,24 @@ export function Dashboard({ state, today, update }: Props) {
                       >
                         {isDone && <Check className="size-4" strokeWidth={3} />}
                       </span>
-                      <span className={cn("min-w-0 flex-1 break-words text-base font-semibold", isDone && "text-muted-foreground line-through decoration-primary/60")}>
+                      <span className={cn("min-w-0 flex-1 break-words text-base font-semibold", isDone && "text-muted-foreground line-through decoration-primary/60", isNa && "text-muted-foreground opacity-60")}>
                         <span className="mr-2 font-display tabular-nums text-primary">{i + 1}.</span>
                         {challengeName(c.name)}
                       </span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={!canCheck}
+                      onClick={() => update(s => toggleNotApplicable(s, selected, c.id))}
+                      aria-pressed={isNa}
+                      aria-label={`${naLabel}: ${challengeName(c.name)}`}
+                      title={naLabel}
+                      className={cn(
+                        "shrink-0 rounded-2xl border px-3 text-xs font-bold transition-colors disabled:opacity-50",
+                        isNa ? "border-muted-foreground/60 bg-muted text-foreground" : "bg-card text-muted-foreground hover:border-muted-foreground/40",
+                      )}
+                    >
+                      N/A
                     </button>
                   </li>
                 );

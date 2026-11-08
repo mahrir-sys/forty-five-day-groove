@@ -45,3 +45,6 @@
 - [x] AI pep talk page (/pepp) with daily cached analysis and refresh button
 - [x] Settings split into Challenges and Settings tabs (next)
 - [x] No auto-focus when all done; returning from statistics lands on home (next)
+
+- [x] Smooth swipe-down for panels and focus mode; filled accent tabs in Settings
+- [x] Per-day N/A for challenges, excluded from stats and streaks

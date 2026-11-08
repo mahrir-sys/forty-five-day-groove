@@ -45,3 +45,28 @@ describe("45-dagarsperiod", () => {
     expect(stats.streak).toBe(2);
   });
 });
+
+import { computeChallengeStats, toggleCheck, toggleNotApplicable } from "./challenge";
+describe("not applicable days", () => {
+  const base: AppState = { startDate: "2026-01-01", challenges: [{ id: "a", name: "A" }, { id: "b", name: "B" }], log: {} };
+  it("excludes N/A from percent and keeps the day complete", () => {
+    let s = toggleCheck(base, "2026-01-01", "a");
+    s = toggleNotApplicable(s, "2026-01-01", "b");
+    const stats = computeStats(s, "2026-01-01");
+    expect(stats.percent).toBe(100);
+    expect(stats.completedDays).toBe(1);
+  });
+  it("N/A day neither counts nor breaks a challenge streak", () => {
+    let s = toggleCheck(base, "2026-01-01", "b");
+    s = toggleNotApplicable(s, "2026-01-02", "b");
+    s = toggleCheck(s, "2026-01-03", "b");
+    const b = computeChallengeStats(s, "2026-01-03").find((x) => x.id === "b")!;
+    expect(b.elapsedDays).toBe(2);
+    expect(b.percent).toBe(100);
+    expect(b.currentStreak).toBe(2);
+  });
+  it("marking N/A clears an existing check", () => {
+    const s = toggleNotApplicable(toggleCheck(base, "2026-01-01", "a"), "2026-01-01", "a");
+    expect(s.log["2026-01-01"]).toEqual([]);
+  });
+});

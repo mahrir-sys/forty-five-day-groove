@@ -6,6 +6,15 @@ export type Release = { version: string; date: string; changes: Record<Language,
 
 export const RELEASES: Release[] = [
   {
+    version: "1.7.0",
+    date: "2026-11-08",
+    changes: {
+      en: ["Mark a challenge as N/A for a day (e.g. while travelling) without hurting your stats or streak", "Smoother swipe-down closing of panels", "Focus mode can be swiped down to close", "Clearer, colour-filled tabs in Settings"],
+      sv: ["Markera en utmaning som N/A för en dag (t.ex. på resa) utan att statistik eller streak påverkas", "Mjukare stängning av paneler när man sveper nedåt", "Fokusläget kan stängas genom att svepa nedåt", "Tydligare, färgfyllda flikar i Inställningar"],
+      fr: ["Marquer un défi N/A pour une journée (en voyage par ex.) sans affecter statistiques ni série", "Fermeture plus fluide des panneaux en glissant vers le bas", "Le mode concentration se ferme en glissant vers le bas", "Onglets plus visibles et colorés dans les Paramètres"],
+    },
+  },
+  {
     version: "1.6.0",
     date: "2026-11-06",
     changes: {

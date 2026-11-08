@@ -62,6 +62,7 @@ const SheetContent = React.forwardRef<
   const closeRef = React.useRef<HTMLButtonElement>(null);
   const drag = React.useRef<{ y: number; active: boolean } | null>(null);
   const [dy, setDy] = React.useState(0);
+  const [settle, setSettle] = React.useState<"close" | "back" | null>(null);
   const swipe = side === "bottom" ? {
     onTouchStart: (e: React.TouchEvent<HTMLDivElement>) => {
       const target = e.target as HTMLElement;
@@ -71,19 +72,29 @@ const SheetContent = React.forwardRef<
     onTouchMove: (e: React.TouchEvent<HTMLDivElement>) => {
       if (!drag.current?.active) return;
       const d = (e.touches[0]?.clientY ?? 0) - drag.current.y;
-      if (d > 0) setDy(d); else if (dy) setDy(0);
+      if (d > 0) { setSettle(null); setDy(d); } else if (dy) setDy(0);
       if (d < 0) drag.current.active = false;
     },
     onTouchEnd: () => {
-      if (dy > 100) closeRef.current?.click();
-      drag.current = null; setDy(0);
+      drag.current = null;
+      if (!dy) return;
+      if (dy > 100) {
+        // Keep sliding down from the finger position, then close without the default animation jumping back.
+        setSettle("close");
+        window.setTimeout(() => { closeRef.current?.click(); window.setTimeout(() => { setSettle(null); setDy(0); }, 50); }, 220);
+      } else {
+        setSettle("back"); setDy(0);
+        window.setTimeout(() => setSettle(null), 220);
+      }
     },
   } : {};
   return (
   <SheetPortal>
     <SheetOverlay />
     <SheetPrimitive.Content ref={ref} className={cn(sheetVariants({ side }), className)}
-      style={dy ? { ...style, transform: `translateY(${dy}px)`, transition: "none" } : style} {...swipe} {...props}>
+      style={settle === "close" ? { ...style, transform: "translateY(100%)", transition: "transform 220ms cubic-bezier(0.32,0.72,0,1)", animation: "none" }
+        : settle === "back" ? { ...style, transform: "translateY(0)", transition: "transform 220ms cubic-bezier(0.32,0.72,0,1)" }
+        : dy ? { ...style, transform: `translateY(${dy}px)`, transition: "none" } : style} {...swipe} {...props}>
       {side === "bottom" && <div aria-hidden className="mx-auto -mt-3 mb-3 h-1.5 w-12 rounded-full bg-muted-foreground/30" />}
       <SheetPrimitive.Close ref={closeRef} className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background cursor-pointer transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
         <X className="h-4 w-4" />

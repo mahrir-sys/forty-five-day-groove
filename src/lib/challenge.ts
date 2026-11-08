@@ -12,6 +12,8 @@ export type AppState = {
   log: Record<string, string[]>;
   /** Optional private daily reflections; never included in shared snapshots. */
   reflections?: Record<string, string>;
+  /** date -> ids of challenges marked not applicable that day (excluded from stats). */
+  na?: Record<string, string[]>;
 };
 
 export const emptyState: AppState = { startDate: null, challenges: [], log: {} };
@@ -67,15 +69,23 @@ export function periodStatus(startDate: string, today: string): PeriodStatus {
   return "active";
 }
 
-export function dayProgress(state: AppState, date: string): { done: number; total: number } {
-  const ids = new Set(state.log[date] ?? []);
-  const done = state.challenges.filter((c) => ids.has(c.id)).length;
-  return { done, total: state.challenges.length };
+export function isNotApplicable(state: AppState, date: string, id: string): boolean {
+  return (state.na?.[date] ?? []).includes(id);
 }
 
+/** Not-applicable challenges are removed from both done and total. */
+export function dayProgress(state: AppState, date: string): { done: number; total: number } {
+  const ids = new Set(state.log[date] ?? []);
+  const active = state.challenges.filter((c) => !isNotApplicable(state, date, c.id));
+  const done = active.filter((c) => ids.has(c.id)).length;
+  return { done, total: active.length };
+}
+
+/** A day where every challenge is not applicable still counts as complete (protects streaks). */
 export function isDayComplete(state: AppState, date: string): boolean {
+  if (state.challenges.length === 0) return false;
   const { done, total } = dayProgress(state, date);
-  return total > 0 && done === total;
+  return done === total;
 }
 
 export function toggleCheck(state: AppState, date: string, challengeId: string): AppState {
@@ -83,7 +93,17 @@ export function toggleCheck(state: AppState, date: string, challengeId: string):
   const next = current.includes(challengeId)
     ? current.filter((id) => id !== challengeId)
     : [...current, challengeId];
-  return { ...state, log: { ...state.log, [date]: next } };
+  const na = (state.na?.[date] ?? []).filter((id) => id !== challengeId);
+  return { ...state, log: { ...state.log, [date]: next }, na: { ...state.na, [date]: na } };
+}
+
+/** Toggles "not applicable" for one challenge on one day; clears any check for it. */
+export function toggleNotApplicable(state: AppState, date: string, challengeId: string): AppState {
+  const current = state.na?.[date] ?? [];
+  const on = !current.includes(challengeId);
+  const na = on ? [...current, challengeId] : current.filter((id) => id !== challengeId);
+  const log = on ? (state.log[date] ?? []).filter((id) => id !== challengeId) : (state.log[date] ?? []);
+  return { ...state, log: { ...state.log, [date]: log }, na: { ...state.na, [date]: na } };
 }
 
 export type Stats = {
@@ -107,13 +127,16 @@ export function computeStats(state: AppState, today: string): Stats {
   let completedDays = 0;
   let missedDays = 0;
   let doneChecks = 0;
+  let possible = 0;
   for (let n = 1; n <= currentDay; n++) {
     const date = addDays(start, n - 1);
     const complete = isDayComplete(state, date);
     if (complete) completedDays++;
     // Today is not missed until it has passed.
     else if (n < todayN) missedDays++;
-    doneChecks += dayProgress(state, date).done;
+    const p = dayProgress(state, date);
+    doneChecks += p.done;
+    possible += p.total;
   }
 
   // Streak: consecutive complete days ending today (or yesterday if today isn't done yet).
@@ -125,7 +148,6 @@ export function computeStats(state: AppState, today: string): Stats {
     n--;
   }
 
-  const possible = currentDay * state.challenges.length;
   const percent = possible === 0 ? 0 : Math.round((doneChecks / possible) * 100);
 
   return { currentDay, completedDays, missedDays, streak, percent };
@@ -153,10 +175,14 @@ export function computeChallengeStats(state: AppState, today: string): Challenge
     const todayN = dayNumber(start, today);
     const elapsed = Math.max(0, Math.min(TOTAL_DAYS, todayN));
     const has = (n: number) => (state.log[addDays(start, n - 1)] ?? []).includes(c.id);
+    const skip = (n: number) => isNotApplicable(state, addDays(start, n - 1), c.id);
     let checked = 0;
     let best = 0;
     let run = 0;
+    let counted = 0;
     for (let n = 1; n <= elapsed; n++) {
+      if (skip(n)) continue;
+      counted++;
       if (has(n)) {
         checked++;
         run++;
@@ -166,16 +192,16 @@ export function computeChallengeStats(state: AppState, today: string): Challenge
     let current = 0;
     let n = elapsed;
     if (n >= 1 && n === todayN && !has(n)) n--;
-    while (n >= 1 && has(n)) {
-      current++;
+    while (n >= 1 && (has(n) || skip(n))) {
+      if (has(n)) current++;
       n--;
     }
     return {
       id: c.id,
       name: c.name,
       checkedDays: checked,
-      elapsedDays: elapsed,
-      percent: elapsed === 0 ? 0 : Math.round((checked / elapsed) * 100),
+      elapsedDays: counted,
+      percent: counted === 0 ? 0 : Math.round((checked / counted) * 100),
       currentStreak: current,
       bestStreak: best,
     };

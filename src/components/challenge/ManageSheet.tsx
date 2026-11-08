@@ -76,7 +76,7 @@ export function ManageSheet({ challenges, onAdd, onRename, onRemove, onReorder, 
         </SheetHeader>
 
         <Tabs defaultValue="challenges" className="mt-4">
-        <TabsList className="grid w-full grid-cols-2"><TabsTrigger value="challenges">{copy.challengesTab}</TabsTrigger><TabsTrigger value="settings">{copy.settings}</TabsTrigger></TabsList>
+        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-xl p-1"><TabsTrigger value="challenges" className="h-11 rounded-lg text-base font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md">{copy.challengesTab}</TabsTrigger><TabsTrigger value="settings" className="h-11 rounded-lg text-base font-semibold data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md">{copy.settings}</TabsTrigger></TabsList>
         <TabsContent value="settings">
         <div className="mt-5 flex items-center justify-between gap-3"><span className="text-sm text-muted-foreground">{t("language")}</span><LanguageSelect /></div>
         <div className="mt-5"><label htmlFor="settings-name" className="text-sm text-muted-foreground">{copy.name}</label><form className="mt-2 flex gap-2" onSubmit={e=>{e.preventDefault();onName(nameDraft.trim());setNameSaved(true);}}><Input id="settings-name" autoComplete="given-name" maxLength={60} value={nameDraft} onChange={e=>{setNameDraft(e.target.value);setNameSaved(false);}} onBlur={()=>{if(nameDraft.trim()!==(state.firstName??'')){onName(nameDraft.trim());setNameSaved(true);}}} /><Button type="submit" variant="secondary">{nameSaved?copy.saved:copy.save}</Button></form></div>

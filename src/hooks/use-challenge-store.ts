@@ -14,6 +14,7 @@ function load(): AppState {
       challenges: parsed.challenges ?? [],
       log: parsed.log ?? {},
       reflections: parsed.reflections ?? {},
+      na: parsed.na ?? {},
       firstName: typeof parsed.firstName === "string" ? parsed.firstName.trim().slice(0,60) : "",
     };
   } catch {

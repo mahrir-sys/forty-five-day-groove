@@ -8,7 +8,7 @@ const id = z.string().min(1).max(128);
 export const appStateSchema = z.object({
  startDate: date.nullable(), firstName: z.string().trim().max(60).default(''),
  challenges: z.array(z.object({id,name:z.string().min(1).max(1000)})).max(500).refine(items=>new Set(items.map(item=>item.id)).size===items.length),
- log:z.record(date,z.array(id).max(500)), reflections:z.record(date,z.string().max(1000)).default({})
+ log:z.record(date,z.array(id).max(500)), reflections:z.record(date,z.string().max(1000)).default({}), na:z.record(date,z.array(id).max(500)).default({})
 });
 const schema=z.object({app:z.literal('45 days'),version:z.literal(1),state:appStateSchema,preferences:z.object({language:z.enum(LANGUAGES),sound:z.boolean(),vibration:z.boolean(),soundProfile:z.enum(SOUND_PROFILES).default('harmonic')})});
 export type Backup={app:'45 days';version:1;state:AppState;preferences:{language:Language;sound:boolean;vibration:boolean;soundProfile:SoundProfile}};
