@@ -93,7 +93,6 @@ export function Dashboard({ state, today, update }: Props) {
     if (isNew) checkFeedback(sound, vibration, final, soundProfile);
     if (final && date === today) void celebrate();
   };
-  if (focus) return <><FocusList state={state} today={today} onCheck={id => check(id, today)} onExit={() => setFocus(false)} update={update} /><div hidden><PartnerSheet state={state} today={today} /></div><CoachingAndMilestones state={state} today={today} /></>;
 
   const selectedLabel =
     selected === today ? t("Idag") : selected === addDays(today, -1) ? t("Igår") : fmt(selected, "EEEE d MMM");
@@ -236,16 +235,16 @@ export function Dashboard({ state, today, update }: Props) {
               {state.challenges.map((c, i) => {
                 const isDone = checked.has(c.id);
                 const isNa = isNotApplicable(state, selected, c.id);
-                const naLabel = { en: "Not applicable", sv: "Ej tillämplig", fr: "Non applicable" }[language];
+                const naLabel = (isNa ? { en: "Skipped", sv: "Hoppad över", fr: "Passé" } : { en: "Skip today", sv: "Hoppa över", fr: "Passer" })[language];
                 return (
-                  <li key={c.id} className="flex items-stretch gap-2">
+                  <li key={c.id} className="relative">
                     <button
                       type="button"
                       disabled={!canCheck || isNa}
                       onClick={() => check(c.id, selected)}
                       aria-pressed={isDone}
                       className={cn(
-                        "flex w-full items-center gap-4 rounded-2xl border px-4 py-4 text-left transition-all active:scale-[0.99] disabled:opacity-50",
+                        "flex w-full items-center gap-4 rounded-2xl border px-4 pb-6 pt-4 text-left transition-all active:scale-[0.99] disabled:opacity-50",
                         isDone ? "border-primary/60 bg-primary/10" : "bg-card hover:border-muted-foreground/40",
                       )}
                     >
@@ -268,13 +267,12 @@ export function Dashboard({ state, today, update }: Props) {
                       onClick={() => update(s => toggleNotApplicable(s, selected, c.id))}
                       aria-pressed={isNa}
                       aria-label={`${naLabel}: ${challengeName(c.name)}`}
-                      title={naLabel}
                       className={cn(
-                        "shrink-0 rounded-2xl border px-3 text-xs font-bold transition-colors disabled:opacity-50",
-                        isNa ? "border-muted-foreground/60 bg-muted text-foreground" : "bg-card text-muted-foreground hover:border-muted-foreground/40",
+                        "absolute bottom-1.5 right-3 rounded-full px-2 py-0.5 text-[11px] transition-colors disabled:opacity-40",
+                        isNa ? "bg-muted font-semibold text-foreground" : "text-muted-foreground/70 hover:text-foreground",
                       )}
                     >
-                      N/A
+                      {naLabel}
                     </button>
                   </li>
                 );
@@ -309,6 +307,7 @@ export function Dashboard({ state, today, update }: Props) {
           </div>
         </section>
       </main>
+      {focus && <FocusList state={state} today={today} onCheck={id => check(id, today)} onExit={() => setFocus(false)} update={update} />}
     </div>
   );
 }
