@@ -20,6 +20,7 @@ export default defineConfig({
       workbox: {
         importScripts: ["/push-sw.js"],
         globPatterns: ["**/*.{js,css,png,svg,ico,woff2,webmanifest}"],
+        modifyURLPrefix: { "client/": "" },
         navigateFallback: null,
         cleanupOutdatedCaches: true,
         clientsClaim: true,

@@ -6,6 +6,15 @@ export type Release = { version: string; date: string; changes: Record<Language,
 
 export const RELEASES: Release[] = [
   {
+    version: "1.8.0",
+    date: "2026-11-12",
+    changes: {
+      en: ["The app opens without internet, e.g. in flight mode"],
+      sv: ["Appen öppnas utan internet, t.ex. i flygplansläge"],
+      fr: ["L’application s’ouvre sans internet, par ex. en mode avion"],
+    },
+  },
+  {
     version: "1.7.0",
     date: "2026-11-08",
     changes: {
