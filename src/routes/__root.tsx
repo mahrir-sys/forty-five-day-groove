@@ -15,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/hooks/use-language";
 import { checkForUpdate } from "@/lib/version";
+import { setupOffline } from "@/lib/offline";
 
 function NotFoundComponent() {
   return (
@@ -132,6 +133,7 @@ function RootComponent() {
     const run = () => { void checkForUpdate(); };
     const onVisible = () => { if (document.visibilityState === "visible") run(); };
     run();
+    void setupOffline();
     document.addEventListener("visibilitychange", onVisible);
     window.addEventListener("focus", run);
     const unsubscribe = router.subscribe("onResolved", run);

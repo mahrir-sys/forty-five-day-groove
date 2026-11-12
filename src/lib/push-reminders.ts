@@ -7,10 +7,10 @@ import {
   sendTestReminder,
   syncReminderDevice,
 } from "./push.functions";
+import { workerUrl } from "./offline";
 import type { ReminderSnapshot } from "./reminder";
 
 const DEVICE_KEY = "utmaning45:reminder-device";
-const SW_URL = "/push-sw.js";
 
 export type ReminderStatus = "loading" | "unsupported" | "in-preview" | "blocked" | "off" | "on";
 
@@ -74,7 +74,7 @@ export async function getReminderStatus(): Promise<ReminderStatus> {
 }
 
 async function register(snapshot: ReminderSnapshot): Promise<void> {
-  await navigator.serviceWorker.register(SW_URL, { scope: "/" });
+  await navigator.serviceWorker.register(workerUrl(), { scope: "/" });
   const reg = await navigator.serviceWorker.ready;
   const { publicKey } = await getReminderKey();
   const key = keyBytes(publicKey);

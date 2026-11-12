@@ -48,3 +48,4 @@
 
 - [x] Smooth swipe-down for panels and focus mode; filled accent tabs in Settings
 - [x] Per-day N/A for challenges, excluded from stats and streaks
+- Offline mode: cached app shell via guarded /sw.js (done)
