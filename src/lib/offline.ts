@@ -23,8 +23,22 @@ export async function setupOffline(): Promise<void> {
   if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
   if (offlineAllowed()) {
     await navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => undefined);
+    await warmPages();
     return;
   }
   const regs = await navigator.serviceWorker.getRegistrations().catch(() => []);
   await Promise.all(regs.filter((r) => r.active?.scriptURL.endsWith("/sw.js")).map((r) => r.unregister()));
+}
+
+/** Saves the app pages right away so the first offline start works without a second online visit. */
+async function warmPages(): Promise<void> {
+  if (!("caches" in window) || !navigator.onLine) return;
+  try {
+    const cache = await caches.open("pages");
+    const paths = Array.from(new Set(["/", "/statistik", "/pepp", window.location.pathname]));
+    await Promise.all(paths.map(async (p) => {
+      const res = await fetch(p, { cache: "no-store", credentials: "same-origin" });
+      if (res.ok && res.type === "basic") await cache.put(p, res);
+    }));
+  } catch { /* offline or blocked */ }
 }

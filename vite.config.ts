@@ -29,7 +29,13 @@ export default defineConfig({
           {
             urlPattern: ({ request, url }) => request.mode === "navigate" && !url.pathname.startsWith("/~oauth") && !url.pathname.startsWith("/api/"),
             handler: "NetworkFirst",
-            options: { cacheName: "pages", networkTimeoutSeconds: 4, expiration: { maxEntries: 20 } },
+            options: {
+              cacheName: "pages",
+              networkTimeoutSeconds: 4,
+              expiration: { maxEntries: 20 },
+              // Offline and page not cached yet: serve the cached start page so the app still boots.
+              plugins: [{ handlerDidError: async () => (await caches.match("/", { cacheName: "pages" })) ?? Response.error() }],
+            },
           },
           {
             urlPattern: ({ url, sameOrigin }) => sameOrigin && url.pathname.startsWith("/assets/"),
