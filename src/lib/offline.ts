@@ -6,7 +6,7 @@ export function offlineAllowed(): boolean {
   try { if (window.top !== window.self) return false; } catch { return false; }
   if (new URLSearchParams(window.location.search).get("sw") === "off") return false;
   const h = window.location.hostname.toLowerCase();
-  const label = h.split(".")[0];
+  const label = h.split(".")[0] ?? "";
   for (const d of ["lovable.app", "gpt-eng.com", "gptengineer.run"]) {
     if (h.endsWith("." + d) && (PREVIEW_LABEL.test(label) || /^project--.+-dev$/.test(label))) return false;
   }
