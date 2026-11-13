@@ -1,5 +1,9 @@
+/**
+ * Kärnlogiken för 45-dagarsutmaningen: datum, dagnummer, avbockningar, 'Hoppa över idag' (N/A), statistik och ordning. Alla funktioner är rena (ändrar inget utanför sig själva) och testas i challenge.test.ts.
+ */
 // Pure logic for the 45-day challenge. All dates are local "YYYY-MM-DD" strings.
 
+/** Hur många dagar en utmaningsperiod är. */
 export const TOTAL_DAYS = 45;
 
 export type Challenge = { id: string; name: string };
@@ -16,10 +20,12 @@ export type AppState = {
   na?: Record<string, string[]>;
 };
 
+/** Startläget innan användaren har skapat något. */
 export const emptyState: AppState = { startDate: null, challenges: [], log: {} };
 
 export type PeriodStatus = "upcoming" | "active" | "finished";
 
+/** Gör om ett Date-objekt till texten ÅÅÅÅ-MM-DD i lokal tid. */
 export function toISODate(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -27,6 +33,7 @@ export function toISODate(d: Date): string {
   return `${y}-${m}-${day}`;
 }
 
+/** Gör om ÅÅÅÅ-MM-DD till ett Date-objekt (lokal midnatt). */
 export function parseISODate(iso: string): Date {
   const [y = 0, m = 1, d = 1] = iso.split("-").map(Number);
   return new Date(y, m - 1, d);
@@ -37,10 +44,12 @@ function utc(iso: string): number {
   return Date.UTC(y, m - 1, d);
 }
 
+/** Antal hela dagar mellan två datum. */
 export function daysBetween(from: string, to: string): number {
   return Math.round((utc(to) - utc(from)) / 86_400_000);
 }
 
+/** Lägger till (eller drar ifrån) n dagar på ett datum. */
 export function addDays(iso: string, n: number): string {
   const d = parseISODate(iso);
   d.setDate(d.getDate() + n);
@@ -48,20 +57,24 @@ export function addDays(iso: string, n: number): string {
 }
 
 /** Local day stays on yesterday until 05:00. */
+/** Appens 'logiska' dag: före kl. 05:00 räknas det fortfarande som gårdagen. */
 export function challengeDate(now: Date): string {
  const date = toISODate(now);
  return now.getHours() < 5 ? addDays(date, -1) : date;
 }
 
 /** Day number in the period (1 = start date). Can be <1 or >45. */
+/** Vilken dag i perioden (1–45) ett datum motsvarar. */
 export function dayNumber(startDate: string, date: string): number {
   return daysBetween(startDate, date) + 1;
 }
 
+/** Periodens sista dag. */
 export function endDate(startDate: string): string {
   return addDays(startDate, TOTAL_DAYS - 1);
 }
 
+/** Om perioden inte har börjat, pågår eller är avslutad. */
 export function periodStatus(startDate: string, today: string): PeriodStatus {
   const n = dayNumber(startDate, today);
   if (n < 1) return "upcoming";
@@ -69,11 +82,13 @@ export function periodStatus(startDate: string, today: string): PeriodStatus {
   return "active";
 }
 
+/** Sant om utmaningen är markerad som 'Hoppa över' den dagen. */
 export function isNotApplicable(state: AppState, date: string, id: string): boolean {
   return (state.na?.[date] ?? []).includes(id);
 }
 
 /** Not-applicable challenges are removed from both done and total. */
+/** Hur många utmaningar som är klara av hur många som gäller den dagen (överhoppade räknas inte). */
 export function dayProgress(state: AppState, date: string): { done: number; total: number } {
   const ids = new Set(state.log[date] ?? []);
   const active = state.challenges.filter((c) => !isNotApplicable(state, date, c.id));
@@ -82,12 +97,14 @@ export function dayProgress(state: AppState, date: string): { done: number; tota
 }
 
 /** A day where every challenge is not applicable still counts as complete (protects streaks). */
+/** Sant om alla gällande utmaningar är avbockade. */
 export function isDayComplete(state: AppState, date: string): boolean {
   if (state.challenges.length === 0) return false;
   const { done, total } = dayProgress(state, date);
   return done === total;
 }
 
+/** Bockar av eller avmarkerar en utmaning. Returnerar ett nytt state. */
 export function toggleCheck(state: AppState, date: string, challengeId: string): AppState {
   const current = state.log[date] ?? [];
   const next = current.includes(challengeId)
@@ -98,6 +115,7 @@ export function toggleCheck(state: AppState, date: string, challengeId: string):
 }
 
 /** Toggles "not applicable" for one challenge on one day; clears any check for it. */
+/** Slår på/av 'Hoppa över idag' för en utmaning; tar även bort ev. avbockning. */
 export function toggleNotApplicable(state: AppState, date: string, challengeId: string): AppState {
   const current = state.na?.[date] ?? [];
   const on = !current.includes(challengeId);
@@ -116,6 +134,7 @@ export type Stats = {
   percent: number;
 };
 
+/** Total statistik: klara dagar, streaks, procent m.m. */
 export function computeStats(state: AppState, today: string): Stats {
   if (!state.startDate) {
     return { currentDay: 0, completedDays: 0, missedDays: 0, streak: 0, percent: 0 };
@@ -166,6 +185,7 @@ export type ChallengeStats = {
   bestStreak: number;
 };
 
+/** Statistik per utmaning (streak, andel klara dagar). */
 export function computeChallengeStats(state: AppState, today: string): ChallengeStats[] {
   const start = state.startDate;
   return state.challenges.map((c) => {
@@ -209,6 +229,7 @@ export function computeChallengeStats(state: AppState, today: string): Challenge
 }
 
 /** Moves a challenge one step up (-1) or down (+1); ids and log are untouched. */
+/** Flyttar en utmaning ett steg upp (-1) eller ner (1). */
 export function moveChallenge(state: AppState, id: string, dir: -1 | 1): AppState {
   const i = state.challenges.findIndex((c) => c.id === id);
   const j = i + dir;
@@ -221,6 +242,7 @@ export function moveChallenge(state: AppState, id: string, dir: -1 | 1): AppStat
 }
 
 /** Reorder by stable ids; numbering is derived by the UI and history is untouched. */
+/** Flyttar en utmaning till en annan plats (används vid dra-och-släpp). */
 export function reorderChallenge(state: AppState, activeId: string, overId: string): AppState {
   const from = state.challenges.findIndex((c) => c.id === activeId);
   const to = state.challenges.findIndex((c) => c.id === overId);

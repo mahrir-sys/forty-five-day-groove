@@ -1,3 +1,7 @@
+/**
+ * Datalagring: läser och sparar all appdata i webbläsarens localStorage.
+ * Data läses först efter att sidan laddats (hydrering) för att undvika glapp mellan server och webbläsare.
+ */
 import { useCallback, useEffect, useState } from "react";
 import { challengeDate, emptyState, type AppState } from "@/lib/challenge";
 import { useChallengeNames } from "./use-language";

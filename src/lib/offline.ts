@@ -1,6 +1,10 @@
+/**
+ * Offline-läge: registrerar service workern som sparar appens filer så att den startar utan nät.
+ */
 // Single registrar for the offline app worker (/sw.js). Refuses dev, iframes and Lovable previews.
 const PREVIEW_LABEL = /^(?:id-preview|preview)(?:-[a-z0-9]+)?--.+$/;
 
+/** Offline-cache körs bara på publicerad sajt (inte i förhandsvisning) och kan stängas av med ?sw=off. */
 export function offlineAllowed(): boolean {
   if (!import.meta.env.PROD || typeof window === "undefined") return false;
   try { if (window.top !== window.self) return false; } catch { return false; }
@@ -17,6 +21,7 @@ export function offlineAllowed(): boolean {
 }
 
 /** Worker the reminders should register: the offline worker includes push handling. */
+/** Vilken service worker som ska användas: full offline (sw.js) eller bara push (push-sw.js). */
 export const workerUrl = () => (offlineAllowed() ? "/sw.js" : "/push-sw.js");
 
 export async function setupOffline(): Promise<void> {

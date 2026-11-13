@@ -1,9 +1,14 @@
+/**
+ * Versionshantering: jämför appens version med serverns och laddar om installerade appar när en ny version finns.
+ */
 import { APP_BUILD } from "./build-info";
 
 /** Single source of truth for the running bundle's version. */
+/** Versionsstämpeln som Vite lägger in vid varje bygge. */
 export const APP_VERSION = APP_BUILD;
 
 /** Pure: an update is needed only when the server reports a different, non-empty version. */
+/** Sant om servern har en annan version än den som körs. */
 export function needsUpdate(current: string, remote: unknown): remote is string {
   return typeof remote === "string" && remote.length > 0 && remote !== current;
 }

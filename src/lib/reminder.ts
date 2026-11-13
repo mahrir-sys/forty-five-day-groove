@@ -1,9 +1,13 @@
+/**
+ * Regler för lunch- och kvällspåminnelser (pushnotiser). Servern kör ett jobb varje timme som använder dessa funktioner.
+ */
 // Pure rules for the evening reminder. Shared by the app (what to send) and the server job (when to remind).
 import type { Language } from "./i18n";
 import { personalText } from "./personalization";
 import { addDays, dayNumber, isDayComplete, TOTAL_DAYS, type AppState } from "./challenge";
 
 /** Reminder goes out around 21:00 in the phone's local time zone. */
+/** Klockslag (lokal tid) då kvällspåminnelsen får skickas. */
 export const REMINDER_HOURS: readonly number[] = [21];
 
 export type ReminderSnapshot = {
@@ -19,6 +23,7 @@ export type ReminderSnapshot = {
 export type DeviceReminderState = ReminderSnapshot & { lastRemindedOn: string | null; lastLunchRemindedOn?: string | null };
 
 /** What the server needs to know about the challenge to decide on reminders. */
+/** Minimal sammanfattning av framstegen som skickas till servern (aldrig reflektioner). */
 export function reminderSnapshot(state: AppState, language?: Language): ReminderSnapshot {
   const personal = language ? {language, firstName: state.firstName?.trim() ?? ""} : {};
   if (!state.startDate) return { ...personal, startDate: null, challengeCount: 0, checkedDates: [], completedDates: [] };
@@ -34,6 +39,7 @@ export function reminderSnapshot(state: AppState, language?: Language): Reminder
 }
 
 /** Local calendar date ("YYYY-MM-DD") and hour (0–23) at `now` in the given time zone. */
+/** Datum och timme i användarens tidszon. */
 export function localDateHour(now: Date, timeZone: string): { date: string; hour: number } {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone,
@@ -48,6 +54,7 @@ export function localDateHour(now: Date, timeZone: string): { date: string; hour
 }
 
 /** Remind once per day at 21 during an active period when any challenge remains. */
+/** Ska kvällspåminnelse skickas? Bara om något är oavbockat och inte redan skickat idag. */
 export function shouldRemind(device: DeviceReminderState, local: { date: string; hour: number }): boolean {
   if (!device.startDate || device.challengeCount <= 0) return false;
   if (!REMINDER_HOURS.includes(local.hour)) return false;
@@ -59,6 +66,7 @@ export function shouldRemind(device: DeviceReminderState, local: { date: string;
   return !(device.completedDates ?? device.checkedDates).includes(local.date);
 }
 
+/** Ska lunchpåminnelse skickas? Bara om inget alls är avbockat före kl. 12. */
 export function shouldRemindLunch(device: DeviceReminderState, local: {date:string;hour:number}): boolean {
  if(!device.startDate || device.challengeCount<=0 || local.hour!==12 || device.lastLunchRemindedOn===local.date)return false;
  const day=dayNumber(device.startDate,local.date);
@@ -70,6 +78,7 @@ const lunchWords = {
  fr: ["Un petit début suffit. Pourriez-vous valider un défi cet après-midi ?", "Sans pression : un petit pas peut donner de l’élan à votre journée.", "Un rappel bienveillant à midi : choisissez le défi le plus simple et commencez doucement."]
 };
 const eveningWords = {en:"You still have challenges left today. One step at a time — you have until 5 am.",sv:"Du har utmaningar kvar idag. Ett steg i taget — du har fram till kl. 05.",fr:"Il vous reste des défis aujourd’hui. Un pas à la fois : vous avez jusqu’à 5 h."};
+/** Väljer en varierad notistext på användarens språk. */
 export function reminderMessage(kind:'lunch'|'evening'|'test',date:string,language:Language,firstName='') {
  const index=Math.abs(dayNumber('2026-01-01',date))%3;
  const body=kind==='lunch' ? lunchWords[language][index] ?? '' : kind==='test' ? ({en:'It works! Your reminders are ready.',sv:'Det fungerar! Dina påminnelser är redo.',fr:'Cela fonctionne ! Vos rappels sont prêts.'})[language] : eveningWords[language];
