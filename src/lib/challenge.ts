@@ -1,5 +1,5 @@
 /**
- * Kärnlogiken för 45-dagarsutmaningen: datum, dagnummer, avbockningar, 'Hoppa över idag' (N/A), statistik och ordning. Alla funktioner är rena (ändrar inget utanför sig själva) och testas i challenge.test.ts.
+ * Kärnlogiken för 45-dagarsutmaningen:: datum, dagnummer, avbockningar, 'Hoppa över idag' (N/A), statistik och ordning. Alla funktioner är rena (ändrar inget utanför sig själva) och testas i challenge.test.ts.
  */
 // Pure logic for the 45-day challenge. All dates are local "YYYY-MM-DD" strings.
 
