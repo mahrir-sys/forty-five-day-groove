@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useChallengeStore } from "@/hooks/use-challenge-store";
 import { useLanguage } from "@/hooks/use-language";
 import { generatePep } from "@/lib/pep.functions";
-import { buildPepSummary, PEP_CACHE_KEY, type PepResult } from "@/lib/pep";
+import { buildPepSummary, isStruggling, PEP_CACHE_KEY, type PepResult } from "@/lib/pep";
 
 export const Route = createFileRoute("/pepp")({
   head: () => ({
@@ -95,11 +95,11 @@ function PepPage() {
 
             <ul className="mt-5 space-y-2">
               {summary.challenges.map((ch, i) => {
-                const hard = ch.elapsedDays > 0 && (ch.percent < 70 || ch.missedLast7 >= 3);
+                const hard = isStruggling(ch);
                 return (
-                  <li key={i} className="flex items-center justify-between rounded-2xl border bg-card px-4 py-3">
-                    <span className="truncate pr-3">{challengeName(ch.name)}</span>
-                    <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ${hard ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"}`}>{hard ? c.hard : c.good} · {Math.round(ch.percent)}%</span>
+                  <li key={i} className="flex flex-col gap-1.5 rounded-2xl border bg-card px-4 py-3">
+                    <span className="min-w-0 break-words font-medium">{challengeName(ch.name)}</span>
+                    <span className={`self-start rounded-full px-2.5 py-0.5 text-xs font-semibold ${hard ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"}`}>{hard ? c.hard : c.good} · {Math.round(ch.percent)}%</span>
                   </li>
                 );
               })}

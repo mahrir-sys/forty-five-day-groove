@@ -22,3 +22,12 @@ describe("pep summary", () => {
   });
   it("returns nothing without a period", () => expect(buildPepSummary({ ...base, startDate: null }, "2026-11-02")).toBeNull());
 });
+
+import { isStruggling as _isStruggling } from "./pep";
+describe("isStruggling thresholds", () => {
+  const base = { name: "x", checkedDays: 0, elapsedDays: 10, currentStreak: 0, missedLast7: 3 };
+  it("100% is never struggling", () => expect(_isStruggling({ ...base, percent: 100 })).toBe(false));
+  it("90% with recent misses is strong", () => expect(_isStruggling({ ...base, percent: 90 })).toBe(false));
+  it("81% with 3 recent misses is struggling", () => expect(_isStruggling({ ...base, percent: 81 })).toBe(true));
+  it("below 70% is struggling", () => expect(_isStruggling({ ...base, percent: 60, missedLast7: 0 })).toBe(true));
+});

@@ -8,7 +8,10 @@ export type PepResult = { headline: string; message: string; tips: string[] };
 export const STRUGGLE_PERCENT = 70;
 
 export function isStruggling(c: PepChallenge): boolean {
-  return c.elapsedDays > 0 && (c.percent < STRUGGLE_PERCENT || c.missedLast7 >= 3);
+  if (c.elapsedDays <= 0) return false;
+  // High overall completion (90%+) always counts as strong, even after a recent dip.
+  if (c.percent >= 90) return false;
+  return c.percent < STRUGGLE_PERCENT || c.missedLast7 >= 3;
 }
 
 /** Compact, name-and-number-only summary sent to the AI; reflections never leave the device. */
@@ -22,6 +25,7 @@ export function buildPepSummary(state: AppState, today: string): PepSummary | nu
     for (let i = 1; i <= 7; i++) {
       const date = addDays(today, -i);
       if (date < start || dayNumber(start, date) > 45) continue;
+      if ((state.na?.[date] ?? []).includes(s.id)) continue; // skipped days are not misses
       if (!(state.log[date] ?? []).includes(s.id)) missedLast7++;
     }
     return { name: s.name.slice(0, 200), checkedDays: s.checkedDays, elapsedDays: s.elapsedDays, percent: s.percent, currentStreak: s.currentStreak, missedLast7 };
