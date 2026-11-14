@@ -6,6 +6,15 @@ export type Release = { version: string; date: string; changes: Record<Language,
 
 export const RELEASES: Release[] = [
   {
+    version: "1.8.2",
+    date: "2026-11-14",
+    changes: {
+      en: ["Pep talk: challenges at 90% or more are always marked as going strong", "Skipped days no longer count as misses on the pep page", "Full challenge names are shown on the pep page"],
+      sv: ["Pepp: utmaningar på 90 % eller mer markeras alltid som Går starkt", "Överhoppade dagar räknas inte längre som missar på peppsidan", "Hela utmaningsnamnen visas på peppsidan"],
+      fr: ["Encouragements : les défis à 90 % ou plus sont toujours marqués comme réussis", "Les jours passés ne comptent plus comme manqués sur la page d’encouragement", "Les noms complets des défis sont affichés sur la page d’encouragement"],
+    },
+  },
+  {
     version: "1.8.1",
     date: "2026-11-12",
     changes: {
