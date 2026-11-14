@@ -34,4 +34,13 @@ export function buildPepSummary(state: AppState, today: string): PepSummary | nu
   return { day, streak: computeStats(state, today).streak, firstName: state.firstName?.trim() || null, mood, challenges };
 }
 
+export type PepLevel = "strong" | "onWay" | "hard";
+
+/** Three display levels: 90%+ strong, struggling = needs love, everything else on its way. */
+export function pepLevel(c: PepChallenge): PepLevel {
+  if (isStruggling(c)) return "hard";
+  if (c.elapsedDays <= 0 || c.percent >= 90) return "strong";
+  return "onWay";
+}
+
 export const PEP_CACHE_KEY = "45days:pep";

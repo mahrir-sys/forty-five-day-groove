@@ -6,6 +6,15 @@ export type Release = { version: string; date: string; changes: Record<Language,
 
 export const RELEASES: Release[] = [
   {
+    version: "1.8.3",
+    date: "2026-11-14",
+    changes: {
+      en: ["Pep talk: new level \"On the right track\" for 70–89%"],
+      sv: ["Pepp: ny nivå \"På god väg\" för 70–89 %"],
+      fr: ["Encouragements : nouveau niveau « En bonne voie » pour 70–89 %"],
+    },
+  },
+  {
     version: "1.8.2",
     date: "2026-11-14",
     changes: {

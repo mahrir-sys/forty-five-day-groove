@@ -31,3 +31,12 @@ describe("isStruggling thresholds", () => {
   it("81% with 3 recent misses is struggling", () => expect(_isStruggling({ ...base, percent: 81 })).toBe(true));
   it("below 70% is struggling", () => expect(_isStruggling({ ...base, percent: 60, missedLast7: 0 })).toBe(true));
 });
+
+import { pepLevel } from "./pep";
+describe("pepLevel", () => {
+  const b = { name: "x", checkedDays: 1, elapsedDays: 30, currentStreak: 1, missedLast7: 0 };
+  it("95% is strong", () => expect(pepLevel({ ...b, percent: 95 })).toBe("strong"));
+  it("77% is on the way", () => expect(pepLevel({ ...b, percent: 77 })).toBe("onWay"));
+  it("74% is on the way", () => expect(pepLevel({ ...b, percent: 74 })).toBe("onWay"));
+  it("60% needs love", () => expect(pepLevel({ ...b, percent: 60 })).toBe("hard"));
+});

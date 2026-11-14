@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useChallengeStore } from "@/hooks/use-challenge-store";
 import { useLanguage } from "@/hooks/use-language";
 import { generatePep } from "@/lib/pep.functions";
-import { buildPepSummary, isStruggling, PEP_CACHE_KEY, type PepResult } from "@/lib/pep";
+import { buildPepSummary, pepLevel, PEP_CACHE_KEY, type PepResult } from "@/lib/pep";
 
 export const Route = createFileRoute("/pepp")({
   head: () => ({
@@ -24,9 +24,9 @@ export const Route = createFileRoute("/pepp")({
 });
 
 const copy = {
-  en: { title: "Pep talk", back: "Back", refresh: "New pep talk", loading: "Reading your progress…", tips: "Small steps", none: "Start a period with challenges to get a personal pep talk.", hard: "Needs extra love", good: "Going strong", retry: "Try again" },
-  sv: { title: "Pepp", back: "Tillbaka", refresh: "Ny pepp", loading: "Läser av hur det går…", tips: "Små steg", none: "Starta en period med utmaningar för att få personlig pepp.", hard: "Behöver extra kärlek", good: "Går starkt", retry: "Försök igen" },
-  fr: { title: "Encouragements", back: "Retour", refresh: "Nouvel encouragement", loading: "Analyse de vos progrès…", tips: "Petits pas", none: "Commencez une période avec des défis pour recevoir des encouragements personnels.", hard: "À soutenir", good: "Ça roule", retry: "Réessayer" },
+  en: { title: "Pep talk", back: "Back", refresh: "New pep talk", loading: "Reading your progress…", tips: "Small steps", none: "Start a period with challenges to get a personal pep talk.", hard: "Needs extra love", good: "Going strong", onWay: "On the right track", retry: "Try again" },
+  sv: { title: "Pepp", back: "Tillbaka", refresh: "Ny pepp", loading: "Läser av hur det går…", tips: "Små steg", none: "Starta en period med utmaningar för att få personlig pepp.", hard: "Behöver extra kärlek", good: "Går starkt", onWay: "På god väg", retry: "Försök igen" },
+  fr: { title: "Encouragements", back: "Retour", refresh: "Nouvel encouragement", loading: "Analyse de vos progrès…", tips: "Petits pas", none: "Commencez une période avec des défis pour recevoir des encouragements personnels.", hard: "À soutenir", good: "Ça roule", onWay: "En bonne voie", retry: "Réessayer" },
 } as const;
 
 type Cached = { date: string; language: string; pep: PepResult };
@@ -95,11 +95,13 @@ function PepPage() {
 
             <ul className="mt-5 space-y-2">
               {summary.challenges.map((ch, i) => {
-                const hard = isStruggling(ch);
+                const level = pepLevel(ch);
+                const style = level === "hard" ? "bg-destructive/10 text-destructive" : level === "onWay" ? "bg-secondary text-secondary-foreground" : "bg-primary/10 text-primary";
+                const label = level === "hard" ? c.hard : level === "onWay" ? c.onWay : c.good;
                 return (
                   <li key={i} className="flex flex-col gap-1.5 rounded-2xl border bg-card px-4 py-3">
                     <span className="min-w-0 break-words font-medium">{challengeName(ch.name)}</span>
-                    <span className={`self-start rounded-full px-2.5 py-0.5 text-xs font-semibold ${hard ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"}`}>{hard ? c.hard : c.good} · {Math.round(ch.percent)}%</span>
+                    <span className={`self-start rounded-full px-2.5 py-0.5 text-xs font-semibold ${style}`}>{label} · {Math.round(ch.percent)}%</span>
                   </li>
                 );
               })}
